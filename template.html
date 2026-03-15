@@ -309,6 +309,7 @@ tr:hover td{background:#fafafe}
   </div>
 </div>
 <script>
+  const PW_HASH = -1849485738;
 (function(){
   // Verificar sessão ativa (válida por 12h)
   var s = sessionStorage.getItem('hub_auth');
@@ -736,8 +737,6 @@ document.addEventListener('keydown',function(e){if(e.key==='Enter')checkPw();});
 <script>
 const LAST_UPDATED = 'aguardando sync';
 const TOTAL_ALUNOS = 117;
-// Senha padrão: Prof2026 (alterar via secret HUB_PASSWORD no GitHub)
-const PW_HASH = -1849485738;  // hash de 'Prof2026'
 // ═══════════════════════════════════════════════════════════
 //  DATA — based on real Notion DATABASE Prof. Dr. Marcelo
 // ═══════════════════════════════════════════════════════════
