@@ -128,7 +128,9 @@ def inject_into_template(template_path, disciplines_block, students_block, meta_
 
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
-    print(f"✅ index.html gerado — {datetime.now().strftime('%d/%m/%Y %H:%M')} — {int(re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block).group(1))} entradas")
+    total_match2 = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
+    total_val2 = int(total_match2.group(1)) if total_match2 else 0
+    print(f"✅ index.html gerado — {datetime.now().strftime('%d/%m/%Y %H:%M')} — {total_val2} entradas")
 
 if __name__ == "__main__":
     print("🔄 Buscando dados do Notion...")
