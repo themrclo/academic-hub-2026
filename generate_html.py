@@ -116,18 +116,17 @@ def inject_into_template(template_path, disciplines_block, students_block, meta_
     content = re.sub(r'const DISCIPLINES = \[.*?\];', disciplines_block, content, flags=re.DOTALL)
     content = re.sub(r'const STUDENTS = \[.*?\];',    students_block,    content, flags=re.DOTALL)
 
-    # Inserir / atualizar bloco de metadados
-    now_str = datetime.now().strftime('%d/%m/%Y %H:%M')
-    total_match = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
-    total_val = int(total_match.group(1)) if total_match else 0
-    if "const LAST_UPDATED" in content:
-        content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{now_str}';", content)
-       total_match = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
-        total_alunos = int(total_match.group(1)) if total_match else 0
-        content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {total_alunos};", content)
-    else:
-        content = content.replace("const DISCIPLINES", meta_block + "\nconst DISCIPLINES", 1)
-
+# Inserir / atualizar bloco de metadados
+now_str = datetime.now().strftime('%d/%m/%Y %H:%M')
+total_match = re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block)
+total_val = int(total_match.group(1)) if total_match else 0
+if "const LAST_UPDATED" in content:
+    content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{now_str}';", content)
+    ta_match = re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block)
+    ta_val = int(ta_match.group(1)) if ta_match else 0
+    content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {ta_val};", content)
+else:
+    content = content.replace("const DISCIPLINES", meta_block + "\\nconst DISCIPLINES", 1)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
     total_match2 = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
