@@ -8,7 +8,7 @@ from collections import defaultdict
 from datetime import datetime
 
 NOTION_TOKEN = os.environ["NOTION_TOKEN"]
-HUB_DB_ID    = "7c3a7387-9202-4fa3-b462-f30158678cd2"
+HUB_DB_ID = "73f660e1-e881-4e4f-b402-ce731b8a8a54"
 PASSWORD_HASH = os.environ.get("HUB_PASSWORD", "Prof2026")
 
 HEADERS = {
