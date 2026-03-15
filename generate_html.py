@@ -117,9 +117,12 @@ def inject_into_template(template_path, disciplines_block, students_block, meta_
     content = re.sub(r'const STUDENTS = \[.*?\];',    students_block,    content, flags=re.DOTALL)
 
     # Inserir / atualizar bloco de metadados
+    now_str = datetime.now().strftime('%d/%m/%Y %H:%M')
+    total_match = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
+    total_val = int(total_match.group(1)) if total_match else 0
     if "const LAST_UPDATED" in content:
-        content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{datetime.now().strftime('%d/%m/%Y %H:%M')}';", content)
-        content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {int(re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block).group(1))};", content)
+        content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{now_str}';", content)
+        content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {total_val};", content)
     else:
         content = content.replace("const DISCIPLINES", meta_block + "\nconst DISCIPLINES", 1)
 
