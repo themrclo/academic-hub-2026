@@ -1,0 +1,37 @@
+name: Sync Notion → GitHub Pages
+
+on:
+  schedule:
+    - cron: '0 */2 * * *'   # A cada 2 horas automaticamente
+  push:
+    branches: [main]         # Também roda ao fazer push manual
+  workflow_dispatch:         # Permite rodar manualmente no GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sync Notion data & generate HTML
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          HUB_PASSWORD: ${{ secrets.HUB_PASSWORD }}
+        run: python generate_html.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name  "Academic Hub Bot"
+          git config user.email "bot@academic-hub.local"
+          git add index.html
+          git diff --staged --quiet || git commit -m "🔄 Sync Notion $(date +'%d/%m/%Y %H:%M')"
+          git push

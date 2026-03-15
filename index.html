@@ -1,0 +1,1872 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prof. Dr. Marcelo — Academic Hub 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sidebar-bg:#1e2030;--sidebar-hover:#2a2d45;--sidebar-active:#6366f1;
+  --bg:#f1f5f9;--card:#ffffff;--border:#e2e8f0;
+  --text:#1e293b;--muted:#64748b;--light:#94a3b8;
+  --indigo:#6366f1;--green:#10b981;--red:#ef4444;--amber:#f59e0b;--orange:#f97316;
+  --c-ge:#8b5cf6;--c-mpe6:#f97316;--c-mpe8mc:#eab308;--c-mpe8bm:#3b82f6;--c-con:#6b7280;
+  --radius:12px;--shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden}
+/* ─── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar{width:240px;min-width:240px;background:var(--sidebar-bg);display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+.sidebar-header{padding:20px 16px 16px;border-bottom:1px solid #2d3148}
+.sidebar-header h2{font-size:12px;font-weight:700;color:#a0aec0;letter-spacing:.1em;text-transform:uppercase}
+.sidebar-header p{font-size:13px;color:#e2e8f0;margin-top:4px;font-weight:600}
+.sidebar-semester{background:#2a2d45;border-radius:6px;padding:6px 10px;margin-top:10px;font-size:11px;color:#a0aec0;text-align:center}
+.nav-section{padding:12px 8px 4px;font-size:10px;font-weight:700;color:#4a5568;letter-spacing:.1em;text-transform:uppercase;padding-left:16px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;border-radius:8px;margin:1px 8px;color:#94a3b8;font-size:13px;font-weight:500;transition:all .15s}
+.nav-item:hover{background:var(--sidebar-hover);color:#e2e8f0}
+.nav-item.active{background:var(--sidebar-active);color:#fff}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.sidebar-footer{margin-top:auto;padding:16px;border-top:1px solid #2d3148}
+.prof-card{display:flex;align-items:center;gap:10px}
+.prof-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.prof-info{font-size:11px;color:#a0aec0;line-height:1.4}
+.prof-info strong{display:block;color:#e2e8f0;font-size:12px}
+/* ─── MAIN ─────────────────────────────────────────────────── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left h1{font-size:18px;font-weight:700;color:var(--text)}
+.topbar-left p{font-size:12px;color:var(--muted)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.badge-semester{background:#ede9fe;color:#6366f1;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:var(--indigo);color:#fff}
+.btn-primary:hover{background:#4f46e5}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg)}
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+/* ─── SECTION COMMON ───────────────────────────────────────── */
+.section{display:none}
+.section.active{display:block}
+/* ─── KPI CARDS ────────────────────────────────────────────── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi-value{font-size:28px;font-weight:800;color:var(--text);margin:6px 0 4px}
+.kpi-sub{font-size:11px;color:var(--muted)}
+.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:18px}
+.kpi-icon.purple{background:#ede9fe}
+.kpi-icon.green{background:#d1fae5}
+.kpi-icon.amber{background:#fef3c7}
+.kpi-icon.blue{background:#dbeafe}
+/* ─── CHARTS ROW ───────────────────────────────────────────── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+.chart-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}
+.chart-card.wide{grid-column:span 2}
+.chart-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.chart-sub{font-size:11px;color:var(--muted);margin-bottom:16px}
+.chart-canvas-wrap{position:relative;height:200px}
+/* ─── FILTER BAR ───────────────────────────────────────────── */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.filter-bar select,.filter-bar input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text);background:var(--card);cursor:pointer}
+.filter-bar select:focus,.filter-bar input:focus{outline:none;border-color:var(--indigo)}
+.filter-bar label{font-size:12px;font-weight:600;color:var(--muted)}
+/* ─── TABLE ────────────────────────────────────────────────── */
+.table-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+.table-header h3{font-size:14px;font-weight:700}
+.table-header span{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;padding:10px 16px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border)}
+td{padding:11px 16px;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafe}
+/* ─── BADGES ───────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.badge.green{background:#d1fae5;color:#065f46}
+.badge.red{background:#fee2e2;color:#991b1b}
+.badge.amber{background:#fef3c7;color:#92400e}
+.badge.blue{background:#dbeafe;color:#1e40af}
+.badge.purple{background:#ede9fe;color:#4c1d95}
+.badge.gray{background:#f1f5f9;color:#475569}
+.badge.orange{background:#ffedd5;color:#9a3412}
+/* discipline color dots */
+.disc-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700}
+.disc-ge{background:#f3e8ff;color:#6b21a8}
+.disc-mpe6{background:#fff7ed;color:#c2410c}
+.disc-mpe8mc{background:#fefce8;color:#854d0e}
+.disc-mpe8bm{background:#eff6ff;color:#1d4ed8}
+.disc-con{background:#f8fafc;color:#374151}
+/* ─── STUDENT CARDS ───────────────────────────────────────── */
+.student-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.student-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);cursor:pointer;transition:all .15s;border:2px solid transparent}
+.student-card:hover{border-color:var(--indigo);transform:translateY(-2px)}
+.student-card.selected{border-color:var(--indigo)}
+.student-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff;margin-bottom:12px}
+.student-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.student-meta{font-size:11px;color:var(--muted);margin-bottom:10px}
+.student-stats{display:flex;gap:8px}
+.student-stat{flex:1;background:var(--bg);border-radius:6px;padding:6px 8px;text-align:center}
+.student-stat .val{font-size:14px;font-weight:800;color:var(--text)}
+.student-stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase}
+/* ─── TIMETABLE ────────────────────────────────────────────── */
+.timetable-grid{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.tt-header{display:grid;grid-template-columns:80px repeat(5,1fr);background:#f8fafc;border-bottom:2px solid var(--border)}
+.tt-day{padding:12px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tt-day.today{color:var(--indigo)}
+.tt-body{display:flex;flex-direction:column}
+.tt-row{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:1px solid var(--border)}
+.tt-row:last-child{border-bottom:none}
+.tt-time{padding:8px;font-size:10px;color:var(--muted);font-weight:600;text-align:center;background:#fafafa;border-right:1px solid var(--border);display:flex;align-items:center;justify-content:center}
+.tt-cell{padding:4px;min-height:56px;border-right:1px solid var(--border)}
+.tt-cell:last-child{border-right:none}
+.tt-class{border-radius:6px;padding:6px 8px;height:100%;position:relative;overflow:hidden}
+.tt-class .tt-subj{font-size:11px;font-weight:700}
+.tt-class .tt-turma{font-size:9px;opacity:.75;margin-top:2px}
+.tt-class .tt-loc{font-size:9px;opacity:.65;margin-top:1px}
+.tt-ge{background:#ede9fe;color:#4c1d95}
+.tt-mpe6{background:#ffedd5;color:#9a3412}
+.tt-mpe8mc{background:#fefce8;color:#713f12}
+.tt-mpe8bm{background:#dbeafe;color:#1e3a8a}
+.tt-con{background:#f1f5f9;color:#374151}
+/* ─── PLANNER ──────────────────────────────────────────────── */
+.planner-row{display:flex;gap:16px;margin-bottom:8px}
+.planner-date-col{width:80px;flex-shrink:0;text-align:center}
+.planner-date-num{font-size:28px;font-weight:800;color:var(--text);line-height:1}
+.planner-date-dow{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.planner-date-mon{font-size:10px;color:var(--muted)}
+.planner-items{flex:1;display:flex;flex-direction:column;gap:6px}
+.planner-item{background:var(--card);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow);display:flex;align-items:center;gap:12px;border-left:3px solid transparent}
+.planner-item .pi-title{font-size:13px;font-weight:700;color:var(--text)}
+.planner-item .pi-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.planner-item .pi-tag{margin-left:auto;flex-shrink:0}
+.planner-sep{height:1px;background:var(--border);margin:16px 0}
+/* ─── TASK KANBAN ──────────────────────────────────────────── */
+.kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kanban-col{background:#f8fafc;border-radius:var(--radius);padding:14px}
+.kanban-col-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.kanban-col-title .count{background:var(--border);padding:1px 6px;border-radius:10px;font-size:10px;color:var(--text)}
+.task-card{background:var(--card);border-radius:8px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-bottom:8px}
+.task-card:last-child{margin-bottom:0}
+.task-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:6px}
+.task-meta{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.task-priority{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.task-priority.high{background:var(--red)}
+.task-priority.med{background:var(--amber)}
+.task-priority.low{background:var(--green)}
+/* ─── STANDARDS ────────────────────────────────────────────── */
+.standards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.standard-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.standard-card h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.standard-card p{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.competency-bar{margin-bottom:10px}
+.competency-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;font-weight:600}
+.bar-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width .3s}
+/* ─── DETAIL PANEL ─────────────────────────────────────────── */
+.detail-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:flex-end}
+.detail-overlay.open{display:flex}
+.detail-panel{background:var(--card);width:440px;height:100vh;overflow-y:auto;padding:28px;box-shadow:-8px 0 32px rgba(0,0,0,.15)}
+.detail-panel .dp-header{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.detail-panel .dp-close{margin-left:auto;cursor:pointer;width:32px;height:32px;border-radius:8px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;border:none;color:var(--muted)}
+.detail-panel .dp-close:hover{background:var(--border)}
+.dp-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.dp-stat{background:var(--bg);border-radius:8px;padding:12px;text-align:center}
+.dp-stat .v{font-size:18px;font-weight:800}
+.dp-stat .l{font-size:9px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.dp-section{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:.08em;margin:18px 0 10px}
+.grade-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px}
+.grade-row:last-child{border-bottom:none}
+/* ─── ATTENDANCE GRID ──────────────────────────────────────── */
+.att-grid-wrap{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.att-topbar{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:2px solid var(--border);flex-wrap:wrap}
+.att-month-label{font-size:18px;font-weight:800;color:var(--text);min-width:180px}
+.att-month-label span{color:var(--muted);font-weight:400}
+.att-toggle{display:flex;background:var(--bg);border-radius:8px;padding:3px;gap:2px}
+.att-toggle-btn{padding:6px 18px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:transparent;color:var(--muted);transition:all .15s}
+.att-toggle-btn.active{background:#1e2030;color:#fff}
+.att-nav{display:flex;align-items:center;gap:6px;margin-left:auto}
+.att-nav-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--muted);transition:all .15s}
+.att-nav-btn:hover{background:var(--bg);color:var(--text)}
+.att-today-btn{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:var(--card);font-size:12px;font-weight:600;cursor:pointer;color:var(--text)}
+.att-disc-filter{padding:6px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text);background:var(--card);cursor:pointer}
+/* scrollable grid */
+.att-scroll{overflow-x:auto}
+.att-grid{min-width:max-content;width:100%}
+.att-grid-header{display:flex;background:#f8fafc;border-bottom:2px solid var(--border)}
+.att-name-col{width:190px;min-width:190px;padding:10px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);position:sticky;left:0;background:#f8fafc;z-index:3;border-right:2px solid var(--border)}
+.att-day-head{width:46px;min-width:46px;text-align:center;padding:8px 4px;border-right:1px solid var(--border);flex-shrink:0}
+.att-day-head:last-child{border-right:none}
+.att-day-head .dow{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.att-day-head .dom{font-size:14px;font-weight:800;color:var(--text);line-height:1.3;margin-top:2px}
+.att-day-head.today-h .dow,.att-day-head.today-h .dom{color:var(--indigo)}
+.att-day-head.past-h .dom{color:var(--muted)}
+/* rows */
+.att-row{display:flex;border-bottom:1px solid var(--border);transition:background .1s}
+.att-row:last-child{border-bottom:none}
+.att-row:hover{background:#fafafe}
+.att-student{width:190px;min-width:190px;padding:7px 16px;display:flex;align-items:center;gap:9px;position:sticky;left:0;background:var(--card);z-index:2;border-right:2px solid var(--border)}
+.att-row:hover .att-student{background:#fafafe}
+.att-sav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.att-sname{font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
+/* cells */
+.att-cell{width:46px;min-width:46px;height:46px;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--border);flex-shrink:0;cursor:pointer;transition:background .1s}
+.att-cell:last-child{border-right:none}
+.att-cell.no-class{cursor:default;background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(0,0,0,.015) 4px,rgba(0,0,0,.015) 8px)}
+.att-ci{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;transition:transform .1s}
+.att-cell:not(.no-class):hover .att-ci{transform:scale(1.12)}
+.att-P .att-ci{background:#d1fae5}
+.att-A .att-ci{background:#fee2e2}
+.att-L .att-ci{background:#fef3c7}
+.att-E .att-ci{background:#dbeafe}
+/* footer */
+.att-footer{display:flex;align-items:center;gap:20px;padding:12px 20px;border-top:1px solid var(--border);background:#fafafa;flex-wrap:wrap}
+.att-leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:600}
+.att-leg-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:12px}
+/* stat row above grid */
+.att-stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+/* ─── HISTÓRICO VIEW ──────────────────────────────────────── */
+.hist-class-banner{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
+.hist-banner-kpi{background:var(--card);border-radius:10px;padding:12px 16px;box-shadow:var(--shadow);text-align:center}
+.hist-banner-kpi .kpi-val{font-size:24px;font-weight:800;color:var(--text)}
+.hist-banner-kpi .kpi-lbl{font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.hist-table-wrap{overflow-x:auto;padding:0 4px 4px}
+.hist-table{width:100%;border-collapse:collapse;font-size:12px}
+.hist-table thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:#f8fafc;border-bottom:2px solid var(--border);white-space:nowrap}
+.hist-table thead th.num{text-align:center}
+.hist-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
+.hist-table tbody tr:hover{background:#f8fafc}
+.hist-table td{padding:10px 12px;vertical-align:middle}
+.hist-table td.num{text-align:center;font-weight:700}
+.hist-freq-bar{height:6px;border-radius:3px;background:#e2e8f0;overflow:hidden;width:80px;margin:2px auto 0}
+.hist-freq-fill{height:100%;border-radius:3px;transition:width .4s}
+.hist-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:12px;font-size:10px;font-weight:700}
+.hist-badge.ok{background:#d1fae5;color:#065f46}
+.hist-badge.warn{background:#fef3c7;color:#92400e}
+.hist-badge.risk{background:#fee2e2;color:#991b1b}
+.hist-stud-cell{display:flex;align-items:center;gap:8px}
+.hist-freq-pct{font-size:13px;font-weight:800}
+.att-stat-mini{background:var(--card);border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);border-top:3px solid transparent}
+.att-stat-mini .turma{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--muted)}
+.att-stat-mini .abs{font-size:22px;font-weight:800;margin:3px 0 2px}
+.att-stat-mini .lbl{font-size:10px;color:var(--muted)}
+/* ─── PROGRESS RING ────────────────────────────────────────── */
+.progress-ring{position:relative;width:64px;height:64px;display:inline-flex;align-items:center;justify-content:center}
+.progress-ring svg{position:absolute;top:0;left:0;transform:rotate(-90deg)}
+.progress-ring .ring-val{font-size:12px;font-weight:800;color:var(--text)}
+/* ─── MINI CALENDAR ────────────────────────────────────────── */
+.mini-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:10px}
+.mini-cal-head{font-size:9px;text-align:center;color:var(--muted);font-weight:700;padding:3px}
+.mini-cal-day{font-size:10px;text-align:center;padding:4px 2px;border-radius:4px;cursor:default}
+.mini-cal-day.has-class{background:#ede9fe;color:#4c1d95;font-weight:700;cursor:pointer}
+.mini-cal-day.today-cal{background:var(--indigo);color:#fff;font-weight:700}
+.mini-cal-day.other{color:#c9d3e0}
+/* ─── SECTION HEADER ───────────────────────────────────────── */
+.section-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-h h2{font-size:20px;font-weight:800}
+.section-h p{font-size:12px;color:var(--muted);margin-top:2px}
+/* ─── DASHBOARD NEXT CLASSES ───────────────────────────────── */
+.next-class-list{display:flex;flex-direction:column;gap:8px}
+.next-class-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border-radius:8px}
+.nci-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.nci-info{flex:1}
+.nci-subj{font-size:12px;font-weight:700}
+.nci-meta{font-size:10px;color:var(--muted);margin-top:1px}
+.nci-time{font-size:11px;font-weight:700;color:var(--muted)}
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+/* responsive fallback */
+@media(max-width:900px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .chart-row{grid-template-columns:1fr}
+  .chart-card.wide{grid-column:auto}
+}
+</style>
+</head>
+<body>
+<style>
+#pw-overlay{position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#1e2030 0%,#2a2d45 100%);display:flex;align-items:center;justify-content:center}
+#pw-box{background:#fff;border-radius:16px;padding:40px 48px;text-align:center;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+#pw-box h2{font-size:20px;font-weight:700;color:#1e293b;margin-bottom:6px}
+#pw-box p{font-size:13px;color:#64748b;margin-bottom:24px}
+#pw-input{width:100%;padding:12px 16px;border:2px solid #e2e8f0;border-radius:8px;font-size:15px;text-align:center;letter-spacing:.15em;outline:none;transition:border .2s}
+#pw-input:focus{border-color:#6366f1}
+#pw-btn{margin-top:14px;width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+#pw-btn:hover{background:#4f46e5}
+#pw-err{color:#ef4444;font-size:12px;margin-top:10px;min-height:18px}
+#pw-footer{margin-top:20px;font-size:11px;color:#94a3b8}
+</style>
+<div id="pw-overlay">
+  <div id="pw-box">
+    <h2>🎓 Academic Hub 2026</h2>
+    <p>Prof. Dr. Marcelo Caetano<br>Digite a senha para continuar</p>
+    <input id="pw-input" type="password" placeholder="••••••••" autocomplete="off"/>
+    <button id="pw-btn" onclick="checkPw()">Entrar</button>
+    <div id="pw-err"></div>
+    <div id="pw-footer">Dados sincronizados com Notion</div>
+  </div>
+</div>
+<script>
+(function(){
+  // Verificar sessão ativa (válida por 12h)
+  var s = sessionStorage.getItem('hub_auth');
+  if(s && Date.now() - parseInt(s) < 43200000){
+    document.getElementById('pw-overlay').style.display='none';
+  }
+})();
+function checkPw(){
+  var v = document.getElementById('pw-input').value;
+  // Hash simples (não criptografia — apenas barreira visual)
+  var h = 0; for(var i=0;i<v.length;i++) h=(Math.imul(31,h)+v.charCodeAt(i))|0;
+  if(h === PW_HASH){
+    sessionStorage.setItem('hub_auth', Date.now().toString());
+    document.getElementById('pw-overlay').style.display='none';
+  } else {
+    document.getElementById('pw-err').textContent = 'Senha incorreta. Tente novamente.';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+document.addEventListener('keydown',function(e){if(e.key==='Enter')checkPw();});
+</script>
+
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <h2>Academic Hub</h2>
+    <p>Prof. Dr. Marcelo</p>
+    <div class="sidebar-semester">📅 2026 — 1º Semestre</div>
+  </div>
+
+  <div class="nav-section">Principal</div>
+  <div class="nav-item active" onclick="showSection('dashboard',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Dashboard
+  </div>
+  <div class="nav-item" onclick="showSection('timetable',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Horário (Timetable)
+  </div>
+  <div class="nav-item" onclick="showSection('planner',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Planner
+  </div>
+  <div class="nav-item" onclick="showSection('lessons',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    Aulas (Cronograma)
+  </div>
+
+  <div class="nav-section">Alunos & Avaliação</div>
+  <div class="nav-item" onclick="showSection('students',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Alunos
+  </div>
+  <div class="nav-item" onclick="showSection('grades',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Notas
+  </div>
+  <div class="nav-item" onclick="showSection('attendance',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Chamada / Presença
+  </div>
+
+  <div class="nav-section">Gestão</div>
+  <div class="nav-item" onclick="showSection('standards',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Competências
+  </div>
+  <div class="nav-item" onclick="showSection('tasks',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Tarefas
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="prof-card">
+      <div class="prof-avatar">MC</div>
+      <div class="prof-info">
+        <strong>Prof. Dr. Marcelo</strong>
+        marcelo.caetano@me.com
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════════ -->
+<div class="main">
+  <div id="sync-banner" style="display:none;padding:6px 28px;font-size:12px;font-weight:600;transition:all .3s"></div>
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1 id="topbar-title">Dashboard</h1>
+      <p id="topbar-sub">Visão geral do semestre 2026/1</p>
+    </div>
+    <div class="topbar-right">
+      <span class="badge-semester">2026 / 1º Semestre</span>
+      <span id="notion-status" style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px">
+        <span id="notion-dot" style="width:7px;height:7px;border-radius:50%;background:#94a3b8;display:inline-block"></span>
+        <span id="notion-label">Demo</span>
+      </span>
+      <button class="btn btn-primary" id="sync-btn" onclick="syncFromNotion()">⟳ Sincronizar</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+  <!-- ═══════ DASHBOARD ═══════ -->
+  <div id="section-dashboard" class="section active">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon purple">🎓</div>
+        <div class="kpi-label">Total de Alunos</div>
+        <div class="kpi-value">117</div>
+        <div class="kpi-sub">em 5 turmas ativas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon green">📊</div>
+        <div class="kpi-label">Média Geral TPSL</div>
+        <div class="kpi-value">71,4</div>
+        <div class="kpi-sub">escala 0–100 · meta: 60,0</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon amber">✅</div>
+        <div class="kpi-label">Freq. Média</div>
+        <div class="kpi-value">87,2%</div>
+        <div class="kpi-sub">mín. exigido: 75%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon blue">📅</div>
+        <div class="kpi-label">Aulas Realizadas</div>
+        <div class="kpi-value">47</div>
+        <div class="kpi-sub">de 124 previstas no semestre</div>
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card wide">
+        <div class="chart-title">Média TPSL por Turma</div>
+        <div class="chart-sub">Média ponderada das avaliações (B1 concluído · B2 em andamento)</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-avg-grade"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Distribuição de Resultados</div>
+        <div class="chart-sub">Aprovados · Recuperação · Em risco</div>
+        <div class="chart-canvas-wrap"><canvas id="chart-results-dist"></canvas></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px">
+      <div class="chart-card">
+        <div class="chart-title">Evolução de Notas — Blocos</div>
+        <div class="chart-sub">Média por bloco avaliativo em cada turma</div>
+        <div class="chart-canvas-wrap" style="height:180px"><canvas id="chart-bloco"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Próximas Aulas</div>
+        <div class="chart-sub">Esta semana · 10–14 mar 2026</div>
+        <div class="next-class-list" id="next-classes-list"></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px">
+      <!-- Discipline summary cards -->
+      <div id="disc-cards"></div>
+    </div>
+  </div><!-- /dashboard -->
+
+  <!-- ═══════ TIMETABLE ═══════ -->
+  <div id="section-timetable" class="section">
+    <div class="section-h">
+      <div><h2>Horário Semanal</h2><p>Grade de aulas — semana de 10 a 14 de março de 2026</p></div>
+      <div class="filter-bar" style="margin-bottom:0">
+        <button class="btn btn-ghost" onclick="alert('Semana anterior')">← Anterior</button>
+        <span style="font-size:13px;font-weight:700;padding:0 8px">10–14 mar 2026</span>
+        <button class="btn btn-ghost" onclick="alert('Próxima semana')">Próxima →</button>
+      </div>
+    </div>
+    <div class="timetable-grid">
+      <div class="tt-header">
+        <div class="tt-day">Horário</div>
+        <div class="tt-day today">SEG<br><span style="font-size:14px;font-weight:800;color:#1e293b">10</span></div>
+        <div class="tt-day">TER<br><span style="font-size:14px;font-weight:800;color:#1e293b">11</span></div>
+        <div class="tt-day">QUA<br><span style="font-size:14px;font-weight:800;color:#94a3b8">12</span></div>
+        <div class="tt-day">QUI<br><span style="font-size:14px;font-weight:800;color:#1e293b">13</span></div>
+        <div class="tt-day">SEX<br><span style="font-size:14px;font-weight:800;color:#1e293b">14</span></div>
+      </div>
+      <div class="tt-body" id="tt-body"></div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <span style="font-size:11px;color:var(--muted);font-weight:600">Legenda:</span>
+      <span class="disc-badge disc-ge">ADM-7N-MC — GE</span>
+      <span class="disc-badge disc-mpe6">ADM-6N — MPE</span>
+      <span class="disc-badge disc-mpe8mc">ADM-8N-MC — MPE</span>
+      <span class="disc-badge disc-mpe8bm">ADM-8N-BM — MPE</span>
+      <span class="disc-badge disc-con">ADM-8N-BM — CON</span>
+    </div>
+  </div><!-- /timetable -->
+
+  <!-- ═══════ PLANNER ═══════ -->
+  <div id="section-planner" class="section">
+    <div class="section-h">
+      <div><h2>Planner</h2><p>Planejamento de aulas · março de 2026</p></div>
+      <div class="filter-bar" style="margin-bottom:0">
+        <select id="planner-filter" onchange="renderPlanner()">
+          <option value="">Todas as turmas</option>
+          <option value="ADM-7N-MC — GE">ADM-7N-MC — GE</option>
+          <option value="ADM-6N — MPE">ADM-6N — MPE</option>
+          <option value="ADM-8N-MC — MPE">ADM-8N-MC — MPE</option>
+          <option value="ADM-8N-BM — MPE">ADM-8N-BM — MPE</option>
+          <option value="ADM-8N-BM — Consultoria">ADM-8N-BM — CON</option>
+        </select>
+      </div>
+    </div>
+    <div id="planner-content"></div>
+  </div><!-- /planner -->
+
+  <!-- ═══════ LESSONS ═══════ -->
+  <div id="section-lessons" class="section">
+    <div class="section-h">
+      <div><h2>Cronograma de Aulas</h2><p>Todas as entradas do semestre 2026/1</p></div>
+    </div>
+    <div class="filter-bar">
+      <label>Turma:</label>
+      <select id="lessons-filter-turma" onchange="renderLessons()">
+        <option value="">Todas</option>
+        <option value="ADM-7N-MC">ADM-7N-MC</option>
+        <option value="ADM-6N">ADM-6N</option>
+        <option value="ADM-8N-MC">ADM-8N-MC</option>
+        <option value="ADM-8N-BM">ADM-8N-BM</option>
+      </select>
+      <label>Bloco:</label>
+      <select id="lessons-filter-bloco" onchange="renderLessons()">
+        <option value="">Todos</option>
+        <option value="B1">B1</option>
+        <option value="B2">B2</option>
+        <option value="B3">B3</option>
+        <option value="B4">B4</option>
+      </select>
+      <label>Tipo:</label>
+      <select id="lessons-filter-tipo" onchange="renderLessons()">
+        <option value="">Todos</option>
+        <option value="📚 Aula">📚 Aula</option>
+        <option value="🏛️ Institucional">🏛️ Institucional</option>
+      </select>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Aulas Programadas</h3>
+        <span id="lessons-count">— registros</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th><th>Tema / Conteúdo</th><th>Turma</th><th>Disciplina</th>
+            <th>Tipo</th><th>Bloco</th><th>Dia</th>
+          </tr>
+        </thead>
+        <tbody id="lessons-tbody"></tbody>
+      </table>
+    </div>
+  </div><!-- /lessons -->
+
+  <!-- ═══════ STUDENTS ═══════ -->
+  <div id="section-students" class="section">
+    <div class="section-h">
+      <div><h2>Alunos</h2><p>Todos os alunos matriculados em 2026/1</p></div>
+    </div>
+    <div class="filter-bar">
+      <label>Filtrar por:</label>
+      <select id="students-filter" onchange="renderStudents()">
+        <option value="">Todas as turmas</option>
+        <option value="ADM-7N-MC">ADM-7N-MC — GE</option>
+        <option value="ADM-6N">ADM-6N — MPE</option>
+        <option value="ADM-8N-MC">ADM-8N-MC — MPE</option>
+        <option value="ADM-8N-BM">ADM-8N-BM — MPE / CON</option>
+      </select>
+      <input type="text" id="students-search" placeholder="🔍 Buscar por nome..." oninput="renderStudents()" style="min-width:200px">
+      <span id="students-count" style="font-size:12px;color:var(--muted);margin-left:auto"></span>
+    </div>
+    <div class="student-grid" id="student-grid"></div>
+  </div><!-- /students -->
+
+  <!-- ═══════ GRADES ═══════ -->
+  <div id="section-grades" class="section">
+    <div class="section-h">
+      <div><h2>Notas</h2><p>Registros de avaliação — escala 0–100</p></div>
+    </div>
+    <div class="filter-bar">
+      <label>Disciplina:</label>
+      <select id="grades-filter-disc" onchange="renderGrades()">
+        <option value="">Todas</option>
+        <option value="ADM-7N-MC — GE">ADM-7N-MC — GE</option>
+        <option value="ADM-6N — MPE">ADM-6N — MPE</option>
+        <option value="ADM-8N-MC — MPE">ADM-8N-MC — MPE</option>
+        <option value="ADM-8N-BM — MPE">ADM-8N-BM — MPE</option>
+        <option value="ADM-8N-BM — Consultoria">ADM-8N-BM — CON</option>
+      </select>
+      <label>Tipo:</label>
+      <select id="grades-filter-tipo" onchange="renderGrades()">
+        <option value="">Todos</option>
+        <option value="Prova">Prova</option>
+        <option value="Trabalho">Trabalho</option>
+        <option value="Seminário">Seminário</option>
+        <option value="Participação">Participação</option>
+      </select>
+    </div>
+    <!-- Summary cards -->
+    <div id="grades-summary" style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px"></div>
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Registros de Notas</h3>
+        <span id="grades-count">— registros</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Aluno</th><th>Disciplina</th><th>Avaliação</th><th>Tipo</th>
+            <th>Nota</th><th>Peso</th><th>Data</th>
+          </tr>
+        </thead>
+        <tbody id="grades-tbody"></tbody>
+      </table>
+    </div>
+  </div><!-- /grades -->
+
+  <!-- ═══════ ATTENDANCE ═══════ -->
+  <div id="section-attendance" class="section">
+    <!-- stat strip -->
+    <div class="att-stat-strip" id="att-stat-strip"></div>
+    <!-- main grid card -->
+    <div class="att-grid-wrap">
+      <!-- topbar -->
+      <div class="att-topbar">
+        <div class="att-month-label" id="att-month-label">Março <span>2026</span></div>
+        <div class="att-toggle">
+          <button class="att-toggle-btn active" id="att-btn-history" onclick="setAttMode('history')">Histórico</button>
+          <button class="att-toggle-btn" id="att-btn-record" onclick="setAttMode('record')">Registrar</button>
+        </div>
+        <select class="att-disc-filter" id="att-disc-sel" onchange="renderAttendance()">
+          <option value="ADM-7N-MC — GE">ADM-7N-MC — GE</option>
+          <option value="ADM-6N — MPE">ADM-6N — MPE</option>
+          <option value="ADM-8N-MC — MPE">ADM-8N-MC — MPE</option>
+          <option value="ADM-8N-BM — MPE">ADM-8N-BM — MPE</option>
+          <option value="ADM-8N-BM — Consultoria">ADM-8N-BM — Consultoria</option>
+        </select>
+        <div class="att-nav">
+          <button class="att-nav-btn" onclick="attChangeMonth(-1)">&#8249;</button>
+          <button class="att-today-btn" onclick="attGoToday()">Hoje</button>
+          <button class="att-nav-btn" onclick="attChangeMonth(1)">&#8250;</button>
+        </div>
+        <div id="att-save-badge" style="display:none;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600;margin-left:4px">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Salvo
+        </div>
+        <button class="btn btn-ghost" onclick="attClearSaved()" style="font-size:11px;padding:5px 10px;margin-left:auto;color:var(--muted)" title="Resetar lançamentos salvos">↺ Resetar</button>
+      </div>
+      <!-- grid -->
+      <div class="att-scroll">
+        <div class="att-grid" id="att-grid"></div>
+      </div>
+      <!-- footer legend -->
+      <div class="att-footer">
+        <div class="att-leg"><div class="att-leg-icon" style="background:#d1fae5">✓</div> Presente</div>
+        <div class="att-leg"><div class="att-leg-icon" style="background:#fee2e2">✗</div> Ausente</div>
+        <div class="att-leg"><div class="att-leg-icon" style="background:#fef3c7">🕐</div> Atrasado</div>
+        <div class="att-leg"><div class="att-leg-icon" style="background:#dbeafe">📄</div> Justificado</div>
+        <span style="font-size:10px;color:var(--muted);margin-left:auto">Clique na célula para alterar o status</span>
+      </div>
+    </div>
+    <!-- weekly chart (record mode only) -->
+    <div class="chart-card" id="att-chart-wrap" style="margin-top:16px">
+      <div class="chart-title">Presença Semanal</div>
+      <div class="chart-sub" id="att-chart-sub">Frequência por semana</div>
+      <div class="chart-canvas-wrap" style="height:160px"><canvas id="att-weekly-chart"></canvas></div>
+    </div>
+  </div><!-- /attendance -->
+
+  <!-- ═══════ STANDARDS ═══════ -->
+  <div id="section-standards" class="section">
+    <div class="section-h">
+      <div><h2>Competências</h2><p>Mapeamento de habilidades avaliadas por disciplina</p></div>
+    </div>
+    <div class="filter-bar">
+      <label>Disciplina:</label>
+      <select id="std-filter" onchange="renderStandards()">
+        <option value="">Todas</option>
+        <option value="GAE">GE — ADM-7N-MC</option>
+        <option value="MPE">MPE</option>
+        <option value="CON">CON — ADM-8N-BM</option>
+      </select>
+    </div>
+    <div class="standards-grid" id="standards-grid"></div>
+  </div><!-- /standards -->
+
+  <!-- ═══════ TASKS ═══════ -->
+  <div id="section-tasks" class="section">
+    <div class="section-h">
+      <div><h2>Tarefas</h2><p>Gestão de atividades docentes</p></div>
+      <button class="btn btn-primary" onclick="alert('Nova tarefa — em breve')">+ Nova Tarefa</button>
+    </div>
+    <div class="kanban" id="kanban-board"></div>
+  </div><!-- /tasks -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- ═══════════════════ DETAIL PANEL ═══════════════════ -->
+<div class="detail-overlay" id="detail-overlay" onclick="closeDetail(event)">
+  <div class="detail-panel" id="detail-panel">
+    <div class="dp-header">
+      <div class="student-avatar" id="dp-avatar" style="width:52px;height:52px;font-size:18px"></div>
+      <div>
+        <div style="font-size:16px;font-weight:800" id="dp-name"></div>
+        <div style="font-size:12px;color:var(--muted)" id="dp-meta"></div>
+      </div>
+      <button class="dp-close" onclick="closeDetailPanel()">✕</button>
+    </div>
+    <div class="dp-stat-row" id="dp-stats"></div>
+    <div class="dp-section">Notas registradas</div>
+    <div id="dp-grades"></div>
+    <div class="dp-section" style="margin-top:16px">Faltas registradas</div>
+    <div id="dp-absences"></div>
+  </div>
+</div>
+
+<script>
+const LAST_UPDATED = 'aguardando sync';
+const TOTAL_ALUNOS = 117;
+// Senha padrão: Prof2026 (alterar via secret HUB_PASSWORD no GitHub)
+const PW_HASH = -1849485738;  // hash de 'Prof2026'
+// ═══════════════════════════════════════════════════════════
+//  DATA — based on real Notion DATABASE Prof. Dr. Marcelo
+// ═══════════════════════════════════════════════════════════
+const DISCIPLINES = [
+  { id:'ge',     code:'GE',  turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE',          full:'Gest. Estratégica',                    periodo:7, turno:'NOTURNO',   local:'Montes Claros',    totalAlunos:27, color:'#8b5cf6', cls:'disc-ge',     bg:'#ede9fe', fg:'#4c1d95' },
+  { id:'mpe6',   code:'MPE', turma:'ADM-6N',    disc:'ADM-6N — MPE',             full:'Gestão p/ Micro e Peq. Empresas',      periodo:6, turno:'NOTURNO',   local:'Montes Claros',    totalAlunos:49, color:'#f97316', cls:'disc-mpe6',   bg:'#ffedd5', fg:'#9a3412' },
+  { id:'mpe8mc', code:'MPE', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE',          full:'Gestão p/ Micro e Peq. Empresas',      periodo:8, turno:'NOTURNO',   local:'Montes Claros',    totalAlunos:17, color:'#eab308', cls:'disc-mpe8mc', bg:'#fefce8', fg:'#713f12' },
+  { id:'mpe8bm', code:'MPE', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE',          full:'Gestão p/ Micro e Peq. Empresas',      periodo:8, turno:'NOTURNO',   local:'Brasília de Minas',totalAlunos:12, color:'#3b82f6', cls:'disc-mpe8bm', bg:'#dbeafe', fg:'#1e3a8a' },
+  { id:'con',    code:'CON', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria',  full:'Consultoria Empresarial',               periodo:8, turno:'NOTURNO',   local:'Brasília de Minas',totalAlunos:12, color:'#6b7280', cls:'disc-con',    bg:'#f1f5f9', fg:'#374151' },
+];
+
+const STUDENTS = [
+  // ADM-7N-MC — GE (27 alunos)
+  {id:'s001', name:'Alexia Gabrielly Pereira de Freitas', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC001'},
+  {id:'s002', name:'Ana Clara Ferreira', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC002'},
+  {id:'s003', name:'Ana Flavia Lima Cirqueira', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC003'},
+  {id:'s004', name:'Andressa Antunes Aquino', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC004'},
+  {id:'s005', name:'Barbara Medeiros Rodrigues', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC005'},
+  {id:'s006', name:'Douglas Fernandes Rodrigues', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC006'},
+  {id:'s007', name:'Emily Ster Jose dos Santos', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC007'},
+  {id:'s008', name:'Fernanda Oliveira Jorge', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC008'},
+  {id:'s009', name:'Gabriela Silva Duarte', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC009'},
+  {id:'s010', name:'Joao Antonio Ribeiro Dias', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC010'},
+  {id:'s011', name:'Karla Aparecida Silva Ferreira', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC011'},
+  {id:'s012', name:'Koichi Shibuya', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC012'},
+  {id:'s013', name:'Laisa Catielle Silva Palmeiras', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC013'},
+  {id:'s014', name:'Lara Stephane Ribeiro Santos', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC014'},
+  {id:'s015', name:'Larissa Christine Rodrigues Pereira', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC015'},
+  {id:'s016', name:'Lorrany Emanuele Lopes Veloso', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC016'},
+  {id:'s017', name:'Lucas Almeida de Jesus', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC017'},
+  {id:'s018', name:'Luiz Gustavo Gusmao e Silva', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC018'},
+  {id:'s019', name:'Maria Fernanda Correia Mendes', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC019'},
+  {id:'s020', name:'Maria Luiza Barreto Gomes Leo', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC020'},
+  {id:'s021', name:'Mayra Caroline de Jesus Silva', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC021'},
+  {id:'s022', name:'Paula Karine Ferreira Barbosa', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC022'},
+  {id:'s023', name:'Rafael Xavier Maia', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC023'},
+  {id:'s024', name:'Sthefane Daniele Soares Ribeiro', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC024'},
+  {id:'s025', name:'Taina Rodrigues Santos', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC025'},
+  {id:'s026', name:'Thaina Vasconcelos Lima', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC026'},
+  {id:'s027', name:'Vitor Hugo Santos Pereira', turma:'ADM-7N-MC', disc:'ADM-7N-MC — GE', mat:'7MC027'},
+  // ADM-6N — MPE (49 alunos)
+  {id:'s028', name:'Alysson Afonso Goncalves Pimenta', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE001'},
+  {id:'s029', name:'Ana Cecilia Rodrigues de Carvalho', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE002'},
+  {id:'s030', name:'Ana Luiza Pereira Aquino', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE003'},
+  {id:'s031', name:'Ana Luiza Pinheiro Maia', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE004'},
+  {id:'s032', name:'Andressa Antunes Aquino', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE005'},
+  {id:'s033', name:'Ane Vitoria Pereira Aquino', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE006'},
+  {id:'s034', name:'Brenda Almeida Botelho', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE007'},
+  {id:'s035', name:'Camila Barbosa Neri', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE008'},
+  {id:'s036', name:'Carla Patricia Alves Pereira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE009'},
+  {id:'s037', name:'Christian Daniel Dias de Oliveira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE010'},
+  {id:'s038', name:'Christian Yago Vieira de Souza', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE011'},
+  {id:'s039', name:'Claudio dos Santos Almeida', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE012'},
+  {id:'s040', name:'Edivio Silva Bernardes', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE013'},
+  {id:'s041', name:'Emilly Rafaela Alves Ferreira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE014'},
+  {id:'s042', name:'Filipe Caldeira de Souza Ramos', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE015'},
+  {id:'s043', name:'Iara Freedman Duraes de Almeida', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE016'},
+  {id:'s044', name:'Jhuliana Goncalves dos Santos', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE017'},
+  {id:'s045', name:'Joao Antonio Ribeiro Dias', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE018'},
+  {id:'s046', name:'Joao Pedro Alves Duraes e Azevedo', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE019'},
+  {id:'s047', name:'Joao Victor Adriano Soares Dias', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE020'},
+  {id:'s048', name:'Joao Vitor Pimenta de Oliveira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE021'},
+  {id:'s049', name:'Josester de Oliveira Souza', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE022'},
+  {id:'s050', name:'Josiane Silva Rodrigues', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE023'},
+  {id:'s051', name:'Karine Paulista Ribeiro', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE024'},
+  {id:'s052', name:'Katiele Tainara Goncalves Pereira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE025'},
+  {id:'s053', name:'Keila Stefany Ferreira Silva', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE026'},
+  {id:'s054', name:'Livia do Rosario Mendes', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE027'},
+  {id:'s055', name:'Loren Gabriely Cruz Figueiredo', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE028'},
+  {id:'s056', name:'Lucas Almeida de Jesus', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE029'},
+  {id:'s057', name:'Lucas Soares Rocha', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE030'},
+  {id:'s058', name:'Luise Cardoso de Carvalho', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE031'},
+  {id:'s059', name:'Luiz Eduardo Rocha Guimaraes', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE032'},
+  {id:'s060', name:'Maria Alice de Oliveira Moura', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE033'},
+  {id:'s061', name:'Maria Gabriella de Souza', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE034'},
+  {id:'s062', name:'Maria Julia Rodrigues Silva', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE035'},
+  {id:'s063', name:'Maria Luisa Pereira de Souza', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE036'},
+  {id:'s064', name:'Maria Luiza Mendes Barbosa', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE037'},
+  {id:'s065', name:'Mateus Felipe Silva Salgado', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE038'},
+  {id:'s066', name:'Matheus Vinicius Meira Santos', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE039'},
+  {id:'s067', name:'Nicolly Katy Oliveira Fernandes da Silva', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE040'},
+  {id:'s068', name:'Pedro Lucas Lopes Santos', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE041'},
+  {id:'s069', name:'Rafael de Sousa Pacheco', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE042'},
+  {id:'s070', name:'Rafael Xavier Maia', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE043'},
+  {id:'s071', name:'Raiza Goncalves de Jesus', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE044'},
+  {id:'s072', name:'Roberth Pereira da Silva', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE045'},
+  {id:'s073', name:'Samira Batista Morais', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE046'},
+  {id:'s074', name:'Sergio Andre Dias Silva', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE047'},
+  {id:'s075', name:'Thaina Vasconcelos Lima', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE048'},
+  {id:'s076', name:'Vinicius Antunes Ferreira', turma:'ADM-6N', disc:'ADM-6N — MPE', mat:'6MPE049'},
+  // ADM-8N-MC — MPE (17 alunos)
+  {id:'s077', name:'Adrielle Aparecida Santos Rodrigues', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC001'},
+  {id:'s078', name:'Amanda Silveira Soares', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC002'},
+  {id:'s079', name:'Andrey Raphael Correia dos Santos', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC003'},
+  {id:'s080', name:'Gloria Stefany Souza Rocha', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC004'},
+  {id:'s081', name:'Iasmim Emanuelle Souza Alves', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC005'},
+  {id:'s082', name:'Igor Gabriel Oliveira Cruz', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC006'},
+  {id:'s083', name:'Jose Newton Costa Oliveira', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC007'},
+  {id:'s084', name:'Julia Roberta Alves Ferreira', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC008'},
+  {id:'s085', name:'Laisa Catielle Silva Palmeiras', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC009'},
+  {id:'s086', name:'Lilian Lopes de Souza', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC010'},
+  {id:'s087', name:'Lorena Rodrigues Amaral', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC011'},
+  {id:'s088', name:'Maria Eduarda Pereira da Fonseca', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC012'},
+  {id:'s089', name:'Natanael Cardoso Mendes', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC013'},
+  {id:'s090', name:'Pedro Augusto Soares Marques Novais Borges', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC014'},
+  {id:'s091', name:'Samira Thawany Pereira de Souza', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC015'},
+  {id:'s092', name:'Samuel Eduardo Soares Ribeiro', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC016'},
+  {id:'s093', name:'Sandi Soares Oliveira', turma:'ADM-8N-MC', disc:'ADM-8N-MC — MPE', mat:'8MC017'},
+  // ADM-8N-BM — MPE (12 alunos)
+  {id:'s094', name:'Ana Cristina Sales Pereira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE01'},
+  {id:'s095', name:'Anne Gabrielle Cardoso Vieira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE02'},
+  {id:'s096', name:'Dafni Marques Almeida', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE03'},
+  {id:'s097', name:'Eduardo Souza Gomes Fonseca', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE04'},
+  {id:'s098', name:'Israel Luiz Rodrigues da Rocha', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE05'},
+  {id:'s099', name:'Lucas Gabriel Fonseca Rabelo', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE06'},
+  {id:'s100', name:'Mariana Barbosa Ferreira da Silva', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE07'},
+  {id:'s101', name:'Pedro Jose de Souza Oliveira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE08'},
+  {id:'s102', name:'Quesli Ribeiro Alves', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE09'},
+  {id:'s103', name:'Sandro Oliveira Silva', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE10'},
+  {id:'s104', name:'Tawane Freire Nobre', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE11'},
+  {id:'s105', name:'Wagner Aparecido Americo Xavier', turma:'ADM-8N-BM', disc:'ADM-8N-BM — MPE', mat:'8BMMPE12'},
+  // ADM-8N-BM — Consultoria (12 alunos)
+  {id:'s106', name:'Ana Cristina Sales Pereira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON01'},
+  {id:'s107', name:'Anne Gabrielle Cardoso Vieira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON02'},
+  {id:'s108', name:'Dafni Marques Almeida', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON03'},
+  {id:'s109', name:'Eduardo Souza Gomes Fonseca', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON04'},
+  {id:'s110', name:'Gustavo Alves Goncalves', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON05'},
+  {id:'s111', name:'Israel Luiz Rodrigues da Rocha', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON06'},
+  {id:'s112', name:'Mariana Barbosa Ferreira da Silva', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON07'},
+  {id:'s113', name:'Pedro Jose de Souza Oliveira', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON08'},
+  {id:'s114', name:'Quesli Ribeiro Alves', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON09'},
+  {id:'s115', name:'Sandro Oliveira Silva', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON10'},
+  {id:'s116', name:'Tawane Freire Nobre', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON11'},
+  {id:'s117', name:'Wagner Aparecido Americo Xavier', turma:'ADM-8N-BM', disc:'ADM-8N-BM — Consultoria', mat:'8BMCON12'},
+];
+
+// helper: generate grades for a student
+function mkGrades(studentId, disc, turma, scores) {
+  return scores.map(s => ({
+    studentId, disc, turma,
+    avaliacao: s.av, tipo: s.tipo, nota: s.nota, peso: s.peso, data: s.data
+  }));
+}
+const GRADES_RAW = [];
+
+const ATTENDANCE = [];
+
+const CRONOGRAMA = [
+  // ADM-7N-MC — GE (Segunda + Terça, MATUTINO)
+  {date:'2026-02-03',tema:'Apresentação do Programa — GAE',    turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Segunda'},
+  {date:'2026-02-04',tema:'Fundamentos de Estratégia',         turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-10',tema:'Análise Ambiental Interna e Externa',turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Segunda'},
+  {date:'2026-02-11',tema:'Ferramentas: SWOT e PESTEL',        turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-17',tema:'Diagnóstico Estratégico',           turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Segunda'},
+  {date:'2026-02-18',tema:'Workshop: Análise de Casos',        turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-24',tema:'Modelos de Negócios e Posicionamento',turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Segunda'},
+  {date:'2026-02-25',tema:'Entrega: Trabalho B1 — Análise SWOT',turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-03-03',tema:'Revisão para Prova B1',             turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Segunda'},
+  {date:'2026-03-04',tema:'Devolutiva dos Trabalhos',          turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-03-05',tema:'🎯 PROVA B1 — GAE',                 turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-03-10',tema:'B2: Planejamento Estratégico',      turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Segunda'},
+  {date:'2026-03-11',tema:'Balanced Scorecard e BSC',          turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  {date:'2026-03-17',tema:'OKRs e Gestão por Objetivos',       turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Segunda'},
+  {date:'2026-03-18',tema:'Implementação Estratégica',         turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  {date:'2026-03-24',tema:'Monitoramento e Controle',          turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Segunda'},
+  {date:'2026-03-25',tema:'Estudo de Caso: Empresa Brasileira', turma:'ADM-7N-MC',disc:'ADM-7N-MC — GE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  // ADM-6N — MPE (Terça, NOTURNO)
+  {date:'2026-02-04',tema:'Apresentação — MPE ADM-6N',          turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-11',tema:'O Micro e Pequeno Empresário no Brasil',turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-18',tema:'Ambiente Legal e Tributário das MPE',turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-02-25',tema:'Diagnóstico Financeiro Simplificado',turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-03-04',tema:'🎯 PROVA B1 + Seminário de Mercado', turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Terça'},
+  {date:'2026-03-11',tema:'B2: Gestão Comercial e Vendas',     turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  {date:'2026-03-18',tema:'Marketing Digital para MPE',        turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  {date:'2026-03-25',tema:'Precificação e Formação de Preço',  turma:'ADM-6N',disc:'ADM-6N — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Terça'},
+  // ADM-8N-MC — MPE (Quinta, NOTURNO)
+  {date:'2026-02-06',tema:'Apresentação — MPE ADM-8N-MC',          turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-13',tema:'Gestão Estratégica em MPE',         turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-20',tema:'Plano de Negócios na Prática',      turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-27',tema:'Análise Financeira Avançada',       turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-03-06',tema:'🎯 PROVA B1 — MPE ADM-8N-MC',           turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-03-13',tema:'B2: Sustentabilidade e Inovação em MPE',turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Quinta'},
+  {date:'2026-03-20',tema:'Gestão de Pessoas em MPE',          turma:'ADM-8N-MC',disc:'ADM-8N-MC — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Quinta'},
+  // ADM-8N-BM — MPE (Sexta, NOTURNO, Brasília de Minas)
+  {date:'2026-02-07',tema:'Apresentação — MPE ADM-8N-BM',           turma:'ADM-8N-BM',disc:'ADM-8N-BM — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-02-21',tema:'Gestão Local e Regional de MPE',    turma:'ADM-8N-BM',disc:'ADM-8N-BM — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-03-07',tema:'🎯 PROVA B1 — MPE ADM-8N-BM',            turma:'ADM-8N-BM',disc:'ADM-8N-BM — MPE',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-03-21',tema:'B2: Mercado Regional e Oportunidades',turma:'ADM-8N-BM',disc:'ADM-8N-BM — MPE',tipo:'📚 Aula',bloco:'B2',dia:'Sexta'},
+  // ADM-8N-BM — CON (Quinta + Sexta, Brasília de Minas)
+  {date:'2026-02-06',tema:'Apresentação — Consultoria Empresarial',turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-07',tema:'O Processo de Consultoria',         turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-02-13',tema:'Diagnóstico Organizacional',        turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-14',tema:'Coleta e Análise de Dados',         turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-02-20',tema:'Ferramentas de Diagnóstico',        turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-21',tema:'Elaboração do Relatório',           turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-02-27',tema:'Case Study: Análise de Empresa',    turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-02-28',tema:'Apresentação de Diagnósticos',      turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-03-05',tema:'🎯 PROVA B1 — Consultoria',         turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Quinta'},
+  {date:'2026-03-06',tema:'Devolutiva e Feedback B1',          turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B1',dia:'Sexta'},
+  {date:'2026-03-12',tema:'B2: Proposta de Consultoria',       turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B2',dia:'Quinta'},
+  {date:'2026-03-13',tema:'Negociação com o Cliente',          turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B2',dia:'Sexta'},
+  {date:'2026-03-19',tema:'Gestão de Projetos de Consultoria', turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B2',dia:'Quinta'},
+  {date:'2026-03-20',tema:'Ética e Responsabilidade Profissional',turma:'ADM-8N-BM',disc:'ADM-8N-BM — Consultoria',tipo:'📚 Aula',bloco:'B2',dia:'Sexta'},
+];
+
+const TASKS = [
+  {title:'Corrigir Provas B1 — GE (ADM-7N-MC)',     status:'todo',  priority:'high', disc:'ADM-7N-MC — GE',   due:'14/03'},
+  {title:'Lançar Notas B1 — ADM-6N MPE',          status:'todo',  priority:'high', disc:'ADM-6N — MPE',  due:'16/03'},
+  {title:'Preparar slides: BSC e OKRs — GAE',    status:'todo',  priority:'med',  disc:'ADM-7N-MC — GE',   due:'17/03'},
+  {title:'Preparar Material B2 — MPE ADM-8N-MC',     status:'todo',  priority:'med',  disc:'ADM-8N-MC — MPE',  due:'13/03'},
+  {title:'Corrigir Case Study B1 — CON',         status:'progress',priority:'high',disc:'ADM-8N-BM — CON',  due:'12/03'},
+  {title:'Preparar Aula: Gestão Comercial',       status:'progress',priority:'med', disc:'ADM-6N — MPE', due:'11/03'},
+  {title:'Enviar feedback: Trabalho B1 — ADM-8N-BM',  status:'progress',priority:'med', disc:'ADM-8N-BM — MPE',  due:'13/03'},
+  {title:'Plano de Aula Semana 7 — GAE',         status:'done',  priority:'low',  disc:'ADM-7N-MC — GE',   due:'09/03'},
+  {title:'Chamada Semanas 1-5 — todos',          status:'done',  priority:'low',  disc:'',             due:'07/03'},
+  {title:'Enviar programa às coordenações',      status:'done',  priority:'med',  disc:'',             due:'05/03'},
+];
+
+const STANDARDS = [
+  {disc:'GAE', name:'Pensamento Estratégico',       desc:'Capacidade de analisar cenários, identificar oportunidades e formular estratégias competitivas sustentáveis.',
+   levels:[{l:'ADM-7N-MC',v:72},{l:'Meta',v:80}]},
+  {disc:'GAE', name:'Análise Quantitativa',          desc:'Uso de ferramentas quantitativas para diagnóstico e tomada de decisão estratégica baseada em dados.',
+   levels:[{l:'ADM-7N-MC',v:65},{l:'Meta',v:75}]},
+  {disc:'MPE', name:'Diagnóstico Empresarial',       desc:'Capacidade de identificar forças, fraquezas e oportunidades em micro e pequenas empresas.',
+   levels:[{l:'ADM-6N',v:78},{l:'ADM-8N-MC',v:71},{l:'ADM-8N-BM',v:74},{l:'Meta',v:70}]},
+  {disc:'MPE', name:'Planejamento Financeiro',       desc:'Elaboração e análise de fluxo de caixa, DRE simplificado e projeções financeiras para MPE.',
+   levels:[{l:'ADM-6N',v:62},{l:'ADM-8N-MC',v:68},{l:'ADM-8N-BM',v:65},{l:'Meta',v:70}]},
+  {disc:'MPE', name:'Gestão Comercial',              desc:'Estratégias de precificação, marketing e vendas aplicadas ao contexto de micro e pequenas empresas.',
+   levels:[{l:'ADM-6N',v:80},{l:'ADM-8N-MC',v:75},{l:'ADM-8N-BM',v:77},{l:'Meta',v:75}]},
+  {disc:'CON', name:'Diagnóstico Organizacional',   desc:'Aplicação de metodologias de consultoria para mapear problemas e oportunidades nas organizações clientes.',
+   levels:[{l:'ADM-8N-BM',v:70},{l:'Meta',v:75}]},
+  {disc:'CON', name:'Comunicação Executiva',         desc:'Elaboração de relatórios, apresentações e propostas comerciais com linguagem executiva.',
+   levels:[{l:'ADM-8N-BM',v:66},{l:'Meta',v:75}]},
+];
+
+// ─── NAVIGATION ────────────────────────────────────────────
+const SECTION_TITLES = {
+  dashboard:  ['Dashboard','Visão geral do semestre 2026/1'],
+  timetable:  ['Horário (Timetable)','Grade semanal de aulas'],
+  planner:    ['Planner','Planejamento de aulas e entregas'],
+  lessons:    ['Aulas (Cronograma)','Todas as aulas do semestre 2026/1'],
+  students:   ['Alunos','Alunos matriculados em 2026/1'],
+  grades:     ['Notas','Avaliações e médias ponderadas TPSL'],
+  attendance: ['Chamada / Presença','Controle de faltas 2026/1'],
+  standards:  ['Competências','Mapeamento e avaliação de habilidades'],
+  tasks:      ['Tarefas','Gestão de atividades docentes'],
+};
+function showSection(id, el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  const t = SECTION_TITLES[id];
+  document.getElementById('topbar-title').textContent = t[0];
+  document.getElementById('topbar-sub').textContent   = t[1];
+  // lazy render
+  if(id==='timetable')  renderTimetable();
+  if(id==='planner')    renderPlanner();
+  if(id==='lessons')    renderLessons();
+  if(id==='students')   renderStudents();
+  if(id==='grades')     renderGrades();
+  if(id==='attendance') renderAttendance();
+  if(id==='standards')  renderStandards();
+  if(id==='tasks')      renderTasks();
+}
+
+// ─── HELPERS ────────────────────────────────────────────────
+function initials(name){return name.split(' ').filter((_,i,a)=>i===0||i===a.length-1).map(w=>w[0]).join('').toUpperCase()}
+function discInfo(disc){return DISCIPLINES.find(d=>d.disc===disc)||{color:'#94a3b8',bg:'#f1f5f9',fg:'#374151',cls:'disc-con'}}
+function tpsl(grades){
+  const s=grades.reduce((a,g)=>a+g.nota*g.peso,0), p=grades.reduce((a,g)=>a+g.peso,0);
+  return p>0?Math.round(s/p*10)/10:null;
+}
+function absCount(studentId){return ATTENDANCE.filter(a=>a.studentId===studentId).length}
+function studentGrades(id, disc){
+  const g = disc ? GRADES_RAW.filter(g=>g.studentId===id&&g.disc===disc) : GRADES_RAW.filter(g=>g.studentId===id);
+  return g;
+}
+function fmtDate(d){
+  const dt=new Date(d+'T12:00:00');
+  return dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+}
+function avatarColor(name){
+  const colors=['#6366f1','#8b5cf6','#ec4899','#f97316','#10b981','#3b82f6','#ef4444','#f59e0b'];
+  let h=0; for(const c of name) h=(h*31+c.charCodeAt(0))%colors.length;
+  return colors[h];
+}
+
+// ─── DASHBOARD ──────────────────────────────────────────────
+function renderDashboard(){
+  // Next classes
+  const today = new Date('2026-03-12');
+  const upcoming = CRONOGRAMA
+    .filter(c=>new Date(c.date+'T12:00:00')>=today)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date))
+    .slice(0,5);
+  const ncl = document.getElementById('next-classes-list');
+  ncl.innerHTML = upcoming.map(c=>{
+    const di = discInfo(c.disc);
+    return `<div class="next-class-item">
+      <div class="nci-dot" style="background:${di.color}"></div>
+      <div class="nci-info">
+        <div class="nci-subj">${c.tema}</div>
+        <div class="nci-meta">${c.turma} · ${c.dia} ${fmtDate(c.date)}</div>
+      </div>
+      <span class="badge ${c.bloco==='B1'?'purple':c.bloco==='B2'?'blue':'amber'}">${c.bloco}</span>
+    </div>`;
+  }).join('');
+
+  // Chart 1 — avg grade per turma
+  const turmaAvgs = DISCIPLINES.map(d=>{
+    const grades = GRADES_RAW.filter(g=>g.disc===d.disc);
+    if(!grades.length) return {label:d.turma+'\n'+d.code, val:0};
+    const byStudent = {};
+    grades.forEach(g=>{
+      if(!byStudent[g.studentId]) byStudent[g.studentId]=[];
+      byStudent[g.studentId].push(g);
+    });
+    const avgs = Object.values(byStudent).map(gs=>tpsl(gs)||0);
+    return {label:d.turma, val: Math.round(avgs.reduce((a,v)=>a+v,0)/avgs.length*10)/10, color:d.color};
+  });
+  const ctx1 = document.getElementById('chart-avg-grade');
+  if(ctx1._chart) ctx1._chart.destroy();
+  ctx1._chart = new Chart(ctx1,{type:'bar',data:{
+    labels:turmaAvgs.map(t=>t.label),
+    datasets:[{data:turmaAvgs.map(t=>t.val),backgroundColor:turmaAvgs.map(t=>t.color+'cc'),
+      borderRadius:6,borderSkipped:false}]
+  },options:{plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{font:{size:10}}},x:{ticks:{font:{size:11}}}},responsive:true,maintainAspectRatio:false}});
+
+  // Chart 2 — results distribution
+  const ctx2 = document.getElementById('chart-results-dist');
+  if(ctx2._chart) ctx2._chart.destroy();
+  ctx2._chart = new Chart(ctx2,{type:'doughnut',data:{
+    labels:['Aprovados','Em Recuperação','Em Risco'],
+    datasets:[{data:[68,19,13],backgroundColor:['#10b981','#f59e0b','#ef4444'],borderWidth:0}]
+  },options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},responsive:true,maintainAspectRatio:false,cutout:'65%'}});
+
+  // Chart 3 — bloco evolution
+  const ctx3 = document.getElementById('chart-bloco');
+  if(ctx3._chart) ctx3._chart.destroy();
+  ctx3._chart = new Chart(ctx3,{type:'line',data:{
+    labels:['B1','B2 (proj.)','B3 (proj.)','B4 (proj.)'],
+    datasets:[
+      {label:'ADM-7N-MC GE', data:[72,null,null,null],       borderColor:'#8b5cf6',backgroundColor:'#8b5cf620',tension:.3,pointRadius:4},
+      {label:'ADM-6N MPE',data:[75,null,null,null],        borderColor:'#f97316',backgroundColor:'#f9731620',tension:.3,pointRadius:4},
+      {label:'ADM-8N-MC MPE',data:[70,null,null,null],        borderColor:'#eab308',backgroundColor:'#eab30820',tension:.3,pointRadius:4},
+      {label:'ADM-8N-BM MPE', data:[69,null,null,null],        borderColor:'#3b82f6',backgroundColor:'#3b82f620',tension:.3,pointRadius:4},
+      {label:'ADM-8N-BM CON', data:[68,null,null,null],        borderColor:'#6b7280',backgroundColor:'#6b728020',tension:.3,pointRadius:4},
+    ]
+  },options:{plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:8}}},scales:{y:{min:40,max:100,ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},responsive:true,maintainAspectRatio:false}});
+}
+
+// ─── TIMETABLE ──────────────────────────────────────────────
+const TIMETABLE_SLOTS = [
+  {time:'08:00–09:40', classes:{seg:{disc:'ADM-7N-MC — GE',label:'GE — ADM-7N-MC',sub:'Montes Claros',cls:'tt-ge'}}},
+  {time:'10:00–11:40', classes:{seg:{disc:'ADM-7N-MC — GE',label:'GE — ADM-7N-MC',sub:'Montes Claros',cls:'tt-ge'}, ter:{disc:'ADM-7N-MC — GE',label:'GE — ADM-7N-MC',sub:'Montes Claros',cls:'tt-ge'}}},
+  {time:'19:00–20:40', classes:{ter:{disc:'ADM-6N — MPE',label:'MPE — ADM-6N',sub:'Montes Claros',cls:'tt-mpe6'}, qui:{disc:'ADM-8N-MC — MPE',label:'MPE — ADM-8N-MC',sub:'Montes Claros',cls:'tt-mpe8mc'}, sex:{disc:'ADM-8N-BM — Consultoria',label:'CON — ADM-8N-BM',sub:'Brasília de Minas',cls:'tt-con'}}},
+  {time:'21:00–22:40', classes:{qui:{disc:'ADM-8N-MC — MPE',label:'MPE — ADM-8N-MC (cont.)',sub:'Montes Claros',cls:'tt-mpe8mc'}, sex:{disc:'ADM-8N-BM — MPE',label:'MPE — ADM-8N-BM',sub:'Brasília de Minas',cls:'tt-mpe8bm'}}},
+];
+function renderTimetable(){
+  const days=['seg','ter','qua','qui','sex'];
+  const body = document.getElementById('tt-body');
+  body.innerHTML = TIMETABLE_SLOTS.map(slot=>`
+    <div class="tt-row">
+      <div class="tt-time">${slot.time.replace('–','<br>')}</div>
+      ${days.map(d=>{
+        const cl = slot.classes[d];
+        if(!cl) return `<div class="tt-cell"></div>`;
+        return `<div class="tt-cell"><div class="tt-class ${cl.cls}">
+          <div class="tt-subj">${cl.label}</div>
+          <div class="tt-loc">📍 ${cl.sub}</div>
+        </div></div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+// ─── PLANNER ────────────────────────────────────────────────
+function renderPlanner(){
+  const filt = document.getElementById('planner-filter').value;
+  const today = new Date('2026-03-12');
+  const end   = new Date('2026-05-31');
+  let items = CRONOGRAMA
+    .filter(c=>new Date(c.date+'T12:00:00')>=today&&new Date(c.date+'T12:00:00')<=end)
+    .filter(c=>!filt||c.disc===filt)
+    .sort((a,b)=>new Date(a.date)-new Date(b.date));
+  // group by date
+  const byDate={};
+  items.forEach(c=>{if(!byDate[c.date])byDate[c.date]=[];byDate[c.date].push(c)});
+  const div = document.getElementById('planner-content');
+  if(!Object.keys(byDate).length){div.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px">Nenhuma aula encontrada.</p>';return;}
+  div.innerHTML = Object.entries(byDate).map(([date,aulas])=>{
+    const dt = new Date(date+'T12:00:00');
+    const dow = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'][dt.getDay()];
+    const mon = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'][dt.getMonth()];
+    return `<div class="planner-row">
+      <div class="planner-date-col">
+        <div class="planner-date-num">${dt.getDate()}</div>
+        <div class="planner-date-dow">${dow}</div>
+        <div class="planner-date-mon">${mon}</div>
+      </div>
+      <div class="planner-items">
+        ${aulas.map(a=>{
+          const di = discInfo(a.disc);
+          return `<div class="planner-item" style="border-left-color:${di.color}">
+            <div style="width:8px;height:8px;border-radius:50%;background:${di.color};flex-shrink:0"></div>
+            <div>
+              <div class="pi-title">${a.tema}</div>
+              <div class="pi-meta">${a.turma} · ${a.disc} · ${a.dia}</div>
+            </div>
+            <div class="pi-tag"><span class="badge ${a.bloco==='B1'?'purple':a.bloco==='B2'?'blue':'amber'}">${a.bloco}</span></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('<div class="planner-sep"></div>');
+}
+
+// ─── LESSONS ────────────────────────────────────────────────
+function renderLessons(){
+  const ft = document.getElementById('lessons-filter-turma').value;
+  const fb = document.getElementById('lessons-filter-bloco').value;
+  const ftp= document.getElementById('lessons-filter-tipo').value;
+  let items = [...CRONOGRAMA].sort((a,b)=>new Date(a.date)-new Date(b.date))
+    .filter(c=>(!ft||c.turma===ft)&&(!fb||c.bloco===fb)&&(!ftp||c.tipo===ftp));
+  document.getElementById('lessons-count').textContent = `${items.length} aulas`;
+  const today = new Date('2026-03-12');
+  document.getElementById('lessons-tbody').innerHTML = items.map(c=>{
+    const past = new Date(c.date+'T12:00:00') < today;
+    const di = discInfo(c.disc);
+    return `<tr>
+      <td style="color:${past?'var(--muted)':'inherit'}">${fmtDate(c.date)}</td>
+      <td style="font-weight:600">${c.tema}</td>
+      <td><span class="disc-badge ${di.cls}">${c.turma}</span></td>
+      <td><span class="disc-badge ${di.cls}">${c.disc}</span></td>
+      <td><span class="badge ${c.tipo.includes('Aula')?'blue':'amber'}">${c.tipo}</span></td>
+      <td><span class="badge ${c.bloco==='B1'?'purple':c.bloco==='B2'?'blue':'green'}">${c.bloco}</span></td>
+      <td>${c.dia}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── STUDENTS ───────────────────────────────────────────────
+function renderStudents(){
+  const filt = document.getElementById('students-filter').value;
+  const srch = document.getElementById('students-search').value.toLowerCase();
+  let list = STUDENTS
+    .filter(s=>!filt||s.turma===filt)
+    .filter(s=>!srch||s.name.toLowerCase().includes(srch));
+  document.getElementById('students-count').textContent = `${list.length} alunos`;
+  document.getElementById('student-grid').innerHTML = list.map(s=>{
+    const g = studentGrades(s.id, s.disc);
+    const avg = tpsl(g);
+    const abs = absCount(s.id);
+    const di = discInfo(s.disc);
+    const color = avatarColor(s.name);
+    const aprovado = avg !== null && avg >= 60;
+    return `<div class="student-card" onclick="openDetail('${s.id}','${s.disc}')">
+      <div class="student-avatar" style="background:${color}">${initials(s.name)}</div>
+      <div class="student-name">${s.name}</div>
+      <div class="student-meta"><span class="disc-badge ${di.cls}">${s.turma}</span> · ${s.disc.split('—')[1]?.trim()||s.disc}</div>
+      <div class="student-stats">
+        <div class="student-stat">
+          <div class="val" style="color:${avg===null?'var(--muted)':avg>=60?'var(--green)':'var(--red)'}">${avg!==null?avg:'—'}</div>
+          <div class="lbl">TPSL</div>
+        </div>
+        <div class="student-stat">
+          <div class="val" style="color:${abs>3?'var(--red)':abs>1?'var(--amber)':'var(--text)'}">${abs}</div>
+          <div class="lbl">Faltas</div>
+        </div>
+        <div class="student-stat">
+          <div class="val">${g.length}</div>
+          <div class="lbl">Aval.</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ─── GRADES ─────────────────────────────────────────────────
+function renderGrades(){
+  const fd = document.getElementById('grades-filter-disc').value;
+  const ft = document.getElementById('grades-filter-tipo').value;
+  let items = GRADES_RAW
+    .filter(g=>!fd||g.disc===fd)
+    .filter(g=>!ft||g.tipo===ft);
+  // summary cards
+  const sumDiv = document.getElementById('grades-summary');
+  sumDiv.innerHTML = DISCIPLINES.map(d=>{
+    const gs = GRADES_RAW.filter(g=>g.disc===d.disc);
+    const byS={};gs.forEach(g=>{if(!byS[g.studentId])byS[g.studentId]=[];byS[g.studentId].push(g)});
+    const avgs=Object.values(byS).map(v=>tpsl(v)||0);
+    const m=avgs.length?Math.round(avgs.reduce((a,v)=>a+v,0)/avgs.length*10)/10:0;
+    return `<div class="kpi-card" style="padding:14px;border-top:3px solid ${d.color}">
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em">${d.turma}</div>
+      <div style="font-size:22px;font-weight:800;margin:4px 0 2px;color:${m>=60?'var(--green)':'var(--red)'}">${m||'—'}</div>
+      <div style="font-size:10px;color:var(--muted)">${avgs.length} alunos avaliados</div>
+    </div>`;
+  }).join('');
+  document.getElementById('grades-count').textContent = `${items.length} registros`;
+  document.getElementById('grades-tbody').innerHTML = items.map(g=>{
+    const s = STUDENTS.find(st=>st.id===g.studentId);
+    const di = discInfo(g.disc);
+    const color = s?avatarColor(s.name):'#94a3b8';
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:28px;height:28px;border-radius:50%;background:${color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0">${s?initials(s.name):'?'}</div>
+          <span style="font-weight:600;font-size:12px">${s?s.name:'—'}</span>
+        </div>
+      </td>
+      <td><span class="disc-badge ${di.cls}">${g.disc}</span></td>
+      <td style="font-size:11px">${g.avaliacao}</td>
+      <td><span class="badge ${g.tipo==='Prova'?'red':g.tipo==='Trabalho'?'blue':g.tipo==='Seminário'?'purple':'green'}">${g.tipo}</span></td>
+      <td style="font-weight:800;font-size:14px;color:${g.nota>=60?'var(--green)':'var(--red)'}">${g.nota}</td>
+      <td style="font-weight:600">${g.peso}</td>
+      <td style="color:var(--muted)">${fmtDate(g.data)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── ATTENDANCE GRID ─────────────────────────────────────────
+// State: ATT_STATE[disc][studentId][dateStr] = 'P'|'A'|'L'|'E'
+const ATT_STATE = {};
+let attMode = 'history';   // 'history' | 'record'
+let attYear = 2026;
+let attMonth = 2; // 0-indexed (2=March)
+
+const LS_KEY = 'academic_hub_att_2026';
+
+function attSave(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(ATT_STATE)); } catch(e){}
+  const badge = document.getElementById('att-save-badge');
+  if(badge){
+    badge.style.display='flex';
+    clearTimeout(badge._t);
+    badge._t = setTimeout(()=>{ badge.style.display='none'; }, 1800);
+  }
+}
+function attLoad(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const saved = JSON.parse(raw);
+      // merge saved into ATT_STATE (saved overrides defaults)
+      Object.keys(saved).forEach(disc=>{
+        if(!ATT_STATE[disc]) ATT_STATE[disc]={};
+        Object.keys(saved[disc]).forEach(sid=>{
+          if(!ATT_STATE[disc][sid]) ATT_STATE[disc][sid]={};
+          Object.assign(ATT_STATE[disc][sid], saved[disc][sid]);
+        });
+      });
+    }
+  } catch(e){}
+}
+function attClearSaved(){
+  if(!confirm('Apagar todos os lançamentos salvos e voltar ao padrão?')) return;
+  try{ localStorage.removeItem(LS_KEY); } catch(e){}
+  // reset ATT_STATE
+  Object.keys(ATT_STATE).forEach(k=>delete ATT_STATE[k]);
+  initAttState();
+  renderAttendance();
+}
+
+// Class days per disc (day-of-week: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat)
+const DISC_CLASS_DAYS = {
+  'ADM-7N-MC — GE':        [1,2], // Mon + Tue
+  'ADM-6N — MPE':       [2],   // Tue
+  'ADM-8N-MC — MPE':       [4],   // Thu
+  'ADM-8N-BM — MPE':        [5],   // Fri
+  'ADM-8N-BM — Consultoria':[4,5], // Thu + Fri
+};
+
+function attKey(disc){ return disc; }
+
+function initAttState(){
+  DISCIPLINES.forEach(d=>{
+    const key = attKey(d.disc);
+    if(!ATT_STATE[key]) ATT_STATE[key]={};
+    const studs = STUDENTS.filter(s=>s.disc===d.disc);
+    // build all class dates for semester (Feb–Jun 2026)
+    const classDays = DISC_CLASS_DAYS[d.disc]||[];
+    const semStart = new Date('2026-02-03T12:00:00');
+    const semEnd   = new Date('2026-06-30T12:00:00');
+    const today    = new Date('2026-03-12T12:00:00');
+    studs.forEach(s=>{
+      if(!ATT_STATE[key][s.id]) ATT_STATE[key][s.id]={};
+      let cur = new Date(semStart);
+      while(cur<=semEnd){
+        if(classDays.includes(cur.getDay())){
+          const ds = cur.toISOString().slice(0,10);
+          if(cur<=today){
+            // default: Present
+            if(!ATT_STATE[key][s.id][ds]) ATT_STATE[key][s.id][ds]='P';
+          }
+        }
+        cur.setDate(cur.getDate()+1);
+      }
+    });
+    // apply actual absences from ATTENDANCE (base defaults)
+    ATTENDANCE.filter(a=>a.disc===d.disc).forEach(a=>{
+      const s = STUDENTS.find(st=>st.id===a.studentId);
+      if(!s) return;
+      if(!ATT_STATE[key][a.studentId]) ATT_STATE[key][a.studentId]={};
+      ATT_STATE[key][a.studentId][a.data] = a.justificativa?'E':'A';
+    });
+  });
+  // overlay any previously saved manual entries
+  attLoad();
+}
+
+function setAttMode(m){
+  attMode=m;
+  document.getElementById('att-btn-history').classList.toggle('active', m==='history');
+  document.getElementById('att-btn-record').classList.toggle('active', m==='record');
+  renderAttendance();
+}
+function attChangeMonth(d){
+  attMonth+=d;
+  if(attMonth>11){attMonth=0;attYear++;}
+  if(attMonth<0){attMonth=11;attYear--;}
+  renderAttendance();
+}
+function attGoToday(){attYear=2026;attMonth=2;renderAttendance();}
+
+function getClassDatesInMonth(disc, year, month){
+  const days = DISC_CLASS_DAYS[disc]||[];
+  const dates=[];
+  const d = new Date(year, month, 1);
+  while(d.getMonth()===month){
+    if(days.includes(d.getDay())){
+      // only past/today in history; all in record
+      dates.push(new Date(d));
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return dates;
+}
+
+function cycleStatus(disc, studentId, dateStr){
+  const key = attKey(disc);
+  if(!ATT_STATE[key]) ATT_STATE[key]={};
+  if(!ATT_STATE[key][studentId]) ATT_STATE[key][studentId]={};
+  const cur = ATT_STATE[key][studentId][dateStr]||'';
+  const cycle = {''  :'P', 'P':'A', 'A':'L', 'L':'E', 'E':'P'};
+  ATT_STATE[key][studentId][dateStr] = cycle[cur]||'P';
+  attSave();
+  renderAttendance();
+}
+
+const STATUS_ICON = {P:'✓', A:'✗', L:'🕐', E:'📄', '':''};
+const DOW_PT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+const MON_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+function renderAttendance(){
+  const disc = document.getElementById('att-disc-sel')?.value || 'ADM-7N-MC — GE';
+  const today = new Date('2026-03-12T12:00:00');
+  const studs = STUDENTS.filter(s=>s.disc===disc);
+  const key   = attKey(disc);
+
+  // month label (record mode)
+  document.getElementById('att-month-label').innerHTML =
+    `${MON_PT[attMonth]} <span>${attYear}</span>`;
+
+  // show/hide month nav — only useful in Record mode
+  const monthLabel = document.getElementById('att-month-label');
+  const nav = document.querySelector('.att-nav');
+  if(monthLabel) monthLabel.style.opacity = attMode==='record'?'1':'0.35';
+  if(nav) nav.style.display = attMode==='record'?'flex':'none';
+
+  // ── stat strip: semester totals per discipline ──
+  document.getElementById('att-stat-strip').innerHTML = DISCIPLINES.map(d=>{
+    const dKey = attKey(d.disc);
+    const dStuds = STUDENTS.filter(s=>s.disc===d.disc);
+    const classDays = DISC_CLASS_DAYS[d.disc]||[];
+    const semStart = new Date('2026-02-03T12:00:00');
+    let totalFaltas = 0;
+    dStuds.forEach(s=>{
+      let cur2 = new Date(semStart);
+      while(cur2<=today){
+        if(classDays.includes(cur2.getDay())){
+          const ds2=cur2.toISOString().slice(0,10);
+          const st2=ATT_STATE[dKey]?.[s.id]?.[ds2];
+          if(st2==='A') totalFaltas++;
+        }
+        cur2.setDate(cur2.getDate()+1);
+      }
+    });
+    return `<div class="att-stat-mini" style="border-top-color:${d.color}">
+      <div class="turma">${d.turma}</div>
+      <div class="abs" style="color:${totalFaltas>10?'var(--red)':totalFaltas>5?'var(--amber)':'var(--green)'}">
+        ${totalFaltas}
+      </div>
+      <div class="lbl">faltas no semestre</div>
+    </div>`;
+  }).join('');
+
+  if(attMode === 'history'){
+    renderAttHistory(disc, studs, key, today);
+    document.getElementById('att-chart-wrap').style.display='none';
+  } else {
+    renderAttGrid(disc, studs, key, today);
+    document.getElementById('att-chart-wrap').style.display='block';
+  }
+}
+
+function renderAttHistory(disc, studs, key, today){
+  // all past class dates for this discipline (full semester)
+  const classDays = DISC_CLASS_DAYS[disc]||[];
+  const semStart  = new Date('2026-02-03T12:00:00');
+  const allDates  = [];
+  let cur = new Date(semStart);
+  while(cur <= today){
+    if(classDays.includes(cur.getDay()))
+      allDates.push(cur.toISOString().slice(0,10));
+    cur.setDate(cur.getDate()+1);
+  }
+  const totalAulas = allDates.length;
+
+  // per-student stats
+  const stats = studs.map(s=>{
+    let P=0,A=0,L=0,E=0;
+    allDates.forEach(ds=>{
+      const st=ATT_STATE[key]?.[s.id]?.[ds]||'P';
+      if(st==='P')P++; else if(st==='A')A++;
+      else if(st==='L')L++; else if(st==='E')E++;
+    });
+    const presences = P+L+E;
+    const freq = totalAulas>0 ? Math.round(presences/totalAulas*100) : 100;
+    return {s,P,A,L,E,freq};
+  }).sort((a,b)=>a.freq-b.freq); // worst first
+
+  // class-level KPIs
+  const avgFreq   = stats.length ? Math.round(stats.reduce((acc,x)=>acc+x.freq,0)/stats.length) : 0;
+  const atRisk    = stats.filter(x=>x.freq<75).length;
+  const atWarning = stats.filter(x=>x.freq>=75&&x.freq<85).length;
+  const totalAbs  = stats.reduce((acc,x)=>acc+x.A,0);
+
+  const freqColor = f=> f>=85?'#10b981':f>=75?'#f59e0b':'#ef4444';
+  const badge     = f=> f>=85
+    ?'<span class="hist-badge ok">✓ Regular</span>'
+    :f>=75
+    ?'<span class="hist-badge warn">⚠ Atenção</span>'
+    :'<span class="hist-badge risk">✗ Risco</span>';
+
+  const rows = stats.map(({s,P,A,L,E,freq})=>{
+    const color = avatarColor(s.name);
+    const fc    = freqColor(freq);
+    return `<tr>
+      <td>
+        <div class="hist-stud-cell">
+          <div class="att-sav" style="background:${color};width:28px;height:28px;font-size:10px;flex-shrink:0">${initials(s.name)}</div>
+          <span style="font-size:12px;font-weight:600">${s.name}</span>
+        </div>
+      </td>
+      <td class="num">${totalAulas}</td>
+      <td class="num" style="color:#10b981">${P}</td>
+      <td class="num" style="color:#ef4444">${A}</td>
+      <td class="num" style="color:#f59e0b">${L}</td>
+      <td class="num" style="color:#3b82f6">${E}</td>
+      <td class="num">
+        <div class="hist-freq-pct" style="color:${fc}">${freq}%</div>
+        <div class="hist-freq-bar"><div class="hist-freq-fill" style="width:${freq}%;background:${fc}"></div></div>
+      </td>
+      <td>${badge(freq)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('att-grid').innerHTML = `
+    <div class="hist-class-banner">
+      <div class="hist-banner-kpi">
+        <div class="kpi-val">${totalAulas}</div>
+        <div class="kpi-lbl">Aulas realizadas</div>
+      </div>
+      <div class="hist-banner-kpi">
+        <div class="kpi-val" style="color:${freqColor(avgFreq)}">${avgFreq}%</div>
+        <div class="kpi-lbl">Frequência média</div>
+      </div>
+      <div class="hist-banner-kpi">
+        <div class="kpi-val" style="color:${atRisk>0?'var(--red)':'var(--green)'}">${atRisk}</div>
+        <div class="kpi-lbl">Alunos em risco (&lt;75%)</div>
+      </div>
+      <div class="hist-banner-kpi">
+        <div class="kpi-val" style="color:${atWarning>0?'var(--amber)':'var(--green)'}">${atWarning}</div>
+        <div class="kpi-lbl">Em atenção (75–84%)</div>
+      </div>
+    </div>
+    <div class="hist-table-wrap">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th style="width:220px">Aluno</th>
+            <th class="num">Aulas</th>
+            <th class="num">✓ Pres</th>
+            <th class="num">✗ Aus</th>
+            <th class="num">🕐 Atras</th>
+            <th class="num">📄 Just</th>
+            <th class="num" style="min-width:100px">Frequência</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function renderAttGrid(disc, studs, key, today){
+  const dates = getClassDatesInMonth(disc, attYear, attMonth);
+
+  const headCells = dates.map(dt=>{
+    const ds = dt.toISOString().slice(0,10);
+    const isToday = ds===today.toISOString().slice(0,10);
+    const isPast  = dt < today;
+    return `<div class="att-day-head ${isToday?'today-h':isPast?'past-h':''}">
+      <div class="dow">${DOW_PT[dt.getDay()]}</div>
+      <div class="dom">${dt.getDate()}</div>
+    </div>`;
+  }).join('');
+
+  const rows = studs.map(s=>{
+    const color = avatarColor(s.name);
+    const cells = dates.map(dt=>{
+      const ds = dt.toISOString().slice(0,10);
+      const status = ATT_STATE[key]?.[s.id]?.[ds]||'';
+      const icon   = STATUS_ICON[status]||'';
+      const cls    = status?`att-${status}`:'';
+      return `<div class="att-cell ${cls}" onclick="cycleStatus('${disc}','${s.id}','${ds}')">
+        <div class="att-ci">${icon}</div>
+      </div>`;
+    }).join('');
+    return `<div class="att-row">
+      <div class="att-student">
+        <div class="att-sav" style="background:${color}">${initials(s.name)}</div>
+        <div class="att-sname" title="${s.name}">${s.name}</div>
+      </div>
+      ${cells}
+    </div>`;
+  }).join('');
+
+  document.getElementById('att-grid').innerHTML = `
+    <div class="att-grid-header">
+      <div class="att-name-col">ALUNO ↑</div>
+      ${headCells}
+    </div>
+    ${rows}`;
+
+  // weekly chart
+  const weekMap={};
+  dates.forEach(dt=>{
+    const mon=new Date(dt);
+    mon.setDate(mon.getDate()-((mon.getDay()+6)%7));
+    const wk=mon.toISOString().slice(0,10);
+    if(!weekMap[wk]) weekMap[wk]={P:0,A:0,L:0,E:0,label:'',total:0};
+    weekMap[wk].label=`${mon.getDate()}/${mon.getMonth()+1}`;
+    studs.forEach(s=>{
+      const ds=dt.toISOString().slice(0,10);
+      const st=ATT_STATE[key]?.[s.id]?.[ds];
+      if(st){weekMap[wk][st]=(weekMap[wk][st]||0)+1;weekMap[wk].total++;}
+    });
+  });
+  const weeks=Object.values(weekMap);
+  const ctx=document.getElementById('att-weekly-chart');
+  if(ctx._chart) ctx._chart.destroy();
+  if(weeks.length){
+    document.getElementById('att-chart-sub').textContent=`${disc} · ${MON_PT[attMonth]} ${attYear}`;
+    ctx._chart=new Chart(ctx,{type:'bar',data:{
+      labels:weeks.map(w=>w.label),
+      datasets:[
+        {label:'Presente',    data:weeks.map(w=>w.P||0), backgroundColor:'#10b98199',borderRadius:4},
+        {label:'Atrasado',    data:weeks.map(w=>w.L||0), backgroundColor:'#f59e0b99',borderRadius:4},
+        {label:'Justificado', data:weeks.map(w=>w.E||0), backgroundColor:'#3b82f699',borderRadius:4},
+        {label:'Ausente',     data:weeks.map(w=>w.A||0), backgroundColor:'#ef444499',borderRadius:4},
+      ]
+    },options:{
+      plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},
+      scales:{x:{stacked:true,ticks:{font:{size:10}}},y:{stacked:true,ticks:{font:{size:10}}}},
+      responsive:true,maintainAspectRatio:false
+    }});
+  }
+}
+
+// ─── STANDARDS ──────────────────────────────────────────────
+function renderStandards(){
+  const fd = document.getElementById('std-filter').value;
+  let items = STANDARDS.filter(s=>!fd||s.disc===fd);
+  document.getElementById('standards-grid').innerHTML = items.map(s=>{
+    const maxV = 100;
+    const bars = s.levels.map(l=>{
+      const pct = Math.round(l.v/maxV*100);
+      const color = l.l==='Meta'?'#94a3b8':l.v>=75?'#10b981':l.v>=60?'#f59e0b':'#ef4444';
+      return `<div class="competency-bar">
+        <div class="competency-label"><span>${l.l}</span><span style="color:${color};font-weight:800">${l.v}</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div>
+      </div>`;
+    }).join('');
+    return `<div class="standard-card">
+      <h4>${s.name}</h4>
+      <p>${s.desc}</p>
+      ${bars}
+    </div>`;
+  }).join('');
+}
+
+// ─── TASKS ──────────────────────────────────────────────────
+function renderTasks(){
+  const groups={todo:[],progress:[],done:[]};
+  TASKS.forEach(t=>{if(groups[t.status])groups[t.status].push(t)});
+  const cols=[
+    {key:'todo',    label:'A Fazer',       color:'var(--amber)'},
+    {key:'progress',label:'Em Andamento',  color:'var(--indigo)'},
+    {key:'done',    label:'Concluída',     color:'var(--green)'},
+  ];
+  document.getElementById('kanban-board').innerHTML = cols.map(col=>`
+    <div class="kanban-col">
+      <div class="kanban-col-title">
+        <span style="width:8px;height:8px;border-radius:50%;background:${col.color};flex-shrink:0"></span>
+        ${col.label}
+        <span class="count">${groups[col.key].length}</span>
+      </div>
+      ${groups[col.key].map(t=>`
+        <div class="task-card">
+          <div class="task-title">${t.title}</div>
+          <div class="task-meta">
+            <div class="task-priority ${t.priority}"></div>
+            ${t.disc?`<span class="badge gray">${t.disc.split('—')[0].trim()}</span>`:''}
+            ${t.due?`<span style="margin-left:auto;font-size:10px;color:var(--muted)">📅 ${t.due}</span>`:''}
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ─── STUDENT DETAIL PANEL ───────────────────────────────────
+function openDetail(studentId, disc){
+  const s = STUDENTS.find(st=>st.id===studentId);
+  if(!s) return;
+  const g = GRADES_RAW.filter(gr=>gr.studentId===studentId);
+  const abs = ATTENDANCE.filter(a=>a.studentId===studentId);
+  const avg = tpsl(g);
+  const freqTotal = 12; // approx classes so far
+  const pctFreq = freqTotal>0?Math.round((1-abs.length/freqTotal)*100):100;
+  const di = discInfo(s.disc);
+  const color = avatarColor(s.name);
+
+  document.getElementById('dp-avatar').style.background = color;
+  document.getElementById('dp-avatar').textContent = initials(s.name);
+  document.getElementById('dp-name').textContent = s.name;
+  document.getElementById('dp-meta').textContent = `${s.mat} · ${s.disc}`;
+
+  const statusColor = avg===null?'var(--muted)':avg>=70?'var(--green)':avg>=60?'var(--amber)':'var(--red)';
+  const statusText  = avg===null?'—':avg>=70?'Aprovado':avg>=60?'Recuperação':'Em risco';
+  document.getElementById('dp-stats').innerHTML = `
+    <div class="dp-stat"><div class="v" style="color:${avg===null?'var(--muted)':avg>=60?'var(--green)':'var(--red)'}">${avg!==null?avg:'—'}</div><div class="l">TPSL</div></div>
+    <div class="dp-stat"><div class="v" style="color:${pctFreq>=75?'var(--green)':'var(--red)'}">${pctFreq}%</div><div class="l">Frequência</div></div>
+    <div class="dp-stat"><div class="v" style="color:${statusColor}">${statusText}</div><div class="l">Situação</div></div>`;
+
+  document.getElementById('dp-grades').innerHTML = g.length
+    ? g.map(gr=>`<div class="grade-row">
+        <div>
+          <div style="font-weight:700">${gr.avaliacao}</div>
+          <div style="font-size:10px;color:var(--muted)">${gr.tipo} · Peso ${gr.peso} · ${fmtDate(gr.data)}</div>
+        </div>
+        <span style="font-size:18px;font-weight:800;color:${gr.nota>=60?'var(--green)':'var(--red)'}">${gr.nota}</span>
+      </div>`).join('')
+    : '<p style="color:var(--muted);font-size:12px;padding:8px 0">Nenhuma nota registrada.</p>';
+
+  document.getElementById('dp-absences').innerHTML = abs.length
+    ? abs.map(a=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <div>
+          <div style="font-weight:600">${fmtDate(a.data)}</div>
+          <div style="font-size:10px;color:var(--muted)">${a.disc}</div>
+        </div>
+        ${a.justificativa?`<span class="badge green">Justificada</span>`:`<span class="badge red">Sem justif.</span>`}
+      </div>`).join('')
+    : '<p style="color:var(--green);font-size:12px;padding:8px 0">✓ Nenhuma falta registrada.</p>';
+
+  document.getElementById('detail-overlay').classList.add('open');
+}
+function closeDetail(e){if(e.target===document.getElementById('detail-overlay'))closeDetailPanel()}
+function closeDetailPanel(){document.getElementById('detail-overlay').classList.remove('open')}
+
+// ─── NOTION LIVE SYNC ────────────────────────────────────────
+const API = 'http://localhost:8765';
+let NOTION_LIVE = false;  // true quando o servidor local está ativo
+
+function showSyncBanner(msg, type='info'){
+  const b = document.getElementById('sync-banner');
+  if(!b) return;
+  b.textContent = msg;
+  b.style.background = type==='ok'?'#d1fae5':type==='err'?'#fee2e2':'#ede9fe';
+  b.style.color      = type==='ok'?'#065f46':type==='err'?'#991b1b':'#4c1d95';
+  b.style.display    = 'block';
+  if(type==='ok') setTimeout(()=>{ b.style.display='none'; }, 3000);
+}
+
+async function syncFromNotion(){
+  const btn = document.getElementById('sync-btn');
+  if(btn){ btn.textContent='⟳ Sincronizando…'; btn.disabled=true; }
+  showSyncBanner('Conectando ao Notion…');
+  try {
+    const res = await fetch(`${API}/api/sync`, {signal: AbortSignal.timeout(20000)});
+    if(!res.ok){ throw new Error(`Servidor retornou ${res.status}`); }
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+
+    // Substituir dados globais com dados reais do Notion
+    if(data.alunos?.length)     applyAlunos(data.alunos);
+    if(data.presenca?.length)   applyPresenca(data.presenca);
+    if(data.notas?.length)      applyNotas(data.notas);
+    if(data.cronograma?.length) applyCronograma(data.cronograma);
+
+    NOTION_LIVE = true;
+    const ts = new Date(data.synced_at).toLocaleTimeString('pt-BR');
+    showSyncBanner(`✓ Dados atualizados às ${ts}`, 'ok');
+    if(btn){ btn.textContent='⟳ Sincronizar'; btn.disabled=false; }
+    const dot = document.getElementById('notion-dot');
+    const lbl = document.getElementById('notion-label');
+    if(dot) dot.style.background = '#10b981';
+    if(lbl) lbl.textContent = `Notion • ${ts}`;
+
+    // Re-renderizar tudo
+    renderDashboard(); renderTimetable(); renderLessons();
+    renderStudents();  renderGrades();
+    initAttState();    renderAttendance();
+    renderPlanner();
+
+  } catch(err){
+    const isConn = err.name==='TypeError'||err.message.includes('fetch');
+    if(isConn){
+      showSyncBanner('Servidor local offline — usando dados de demonstração', 'info');
+    } else {
+      showSyncBanner(`Erro: ${err.message}`, 'err');
+    }
+    if(btn){ btn.textContent='⟳ Sincronizar'; btn.disabled=false; }
+  }
+}
+
+// Aplicadores — atualizam os arrays globais com dados do Notion
+function applyAlunos(rows){
+  STUDENTS.length = 0;
+  rows.forEach(r => {
+    if(!r.name) return;
+    const disc = r.disc || r.turma || '';
+    STUDENTS.push({
+      id:    r.id,
+      name:  r.name,
+      turma: r.turma || '',
+      disc:  disc,
+      matricula: r.matricula || '',
+      status: r.status || 'Ativo',
+    });
+  });
+}
+
+function applyPresenca(rows){
+  ATTENDANCE.length = 0;
+  rows.forEach(r => {
+    ATTENDANCE.push({
+      studentId:    r.studentId,
+      disc:         r.disc,
+      data:         r.data,
+      status:       r.status || 'Falta',
+      justificativa:r.justificativa || '',
+    });
+  });
+}
+
+function applyNotas(rows){
+  GRADES_RAW.length = 0;
+  rows.forEach(r => {
+    if(r.nota == null) return;
+    GRADES_RAW.push({
+      studentId: r.studentId,
+      disc:      r.disc,
+      turma:     r.turma,
+      avaliacao: r.avaliacao,
+      tipo:      r.tipo,
+      nota:      r.nota,
+      peso:      r.peso || 1,
+      data:      r.data,
+    });
+  });
+}
+
+function applyCronograma(rows){
+  CRONOGRAMA.length = 0;
+  rows.forEach(r => {
+    CRONOGRAMA.push({
+      id:         r.id,
+      disc:       r.disc,
+      turma:      r.turma,
+      data:       r.data,
+      dia:        r.dia,
+      tema:       r.tema,
+      bloco:      r.bloco,
+      tipo:       r.tipo,
+      statusAula: r.statusAula || 'Planejada',
+    });
+  });
+}
+
+// Escrever falta no Notion via servidor local
+async function pushFaltaToNotion(studentId, disc, dateStr, status, justificativa=''){
+  if(!NOTION_LIVE) return; // offline: já está salvo no LocalStorage
+  try {
+    await fetch(`${API}/api/presenca`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({studentId, disc, data: dateStr, status, justificativa}),
+      signal: AbortSignal.timeout(8000),
+    });
+  } catch(e){ console.warn('Push falta falhou (offline):', e.message); }
+}
+
+// ─── INIT ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async ()=>{
+  // Renderização imediata com dados de demonstração
+  renderDashboard();
+  renderTimetable();
+  renderLessons();
+  renderStudents();
+  renderGrades();
+  initAttState();
+  renderAttendance();
+  renderStandards();
+  renderTasks();
+  renderPlanner();
+
+  // Tenta conectar ao servidor local em background
+  syncFromNotion();
+});
+</script>
+</body>
+</html>
