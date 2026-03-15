@@ -103,8 +103,8 @@ def build_html(entries):
             )
             counter += 1
 
-    disciplines_block = "const DISCIPLINES = [\n" + ",\n".join(disciplines_js) + "\n];"
-    students_block    = "const STUDENTS = [\n" + ",\n".join(students_js) + "\n];"
+    disciplines_block = "const DISCIPLINES = [\\n" + ",\\n".join(disciplines_js) + "\\n];"
+    students_block    = "const STUDENTS = [\\n" + ",\\n".join(students_js) + "\\n];"
     meta_block = f"const LAST_UPDATED = '{updated}'; const TOTAL_ALUNOS = {total};"
 
     return disciplines_block, students_block, meta_block
@@ -113,25 +113,22 @@ def inject_into_template(template_path, disciplines_block, students_block, meta_
     with open(template_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    content = re.sub(r'const DISCIPLINES = \[.*?\];', disciplines_block, content, flags=re.DOTALL)
-    content = re.sub(r'const STUDENTS = \[.*?\];',    students_block,    content, flags=re.DOTALL)
+    content = re.sub(r'const DISCIPLINES = \\[.*?\\];', disciplines_block, content, flags=re.DOTALL)
+    content = re.sub(r'const STUDENTS = \\[.*?\\];',    students_block,    content, flags=re.DOTALL)
 
-# Inserir / atualizar bloco de metadados
-now_str = datetime.now().strftime('%d/%m/%Y %H:%M')
-total_match = re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block)
-total_val = int(total_match.group(1)) if total_match else 0
-if "const LAST_UPDATED" in content:
-    content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{now_str}';", content)
+    # Inserir / atualizar bloco de metadados
+    now_str = datetime.now().strftime('%d/%m/%Y %H:%M')
     ta_match = re.search(r'TOTAL_ALUNOS = (\\d+)', meta_block)
     ta_val = int(ta_match.group(1)) if ta_match else 0
-    content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {ta_val};", content)
-else:
-    content = content.replace("const DISCIPLINES", meta_block + "\\nconst DISCIPLINES", 1)
+    if "const LAST_UPDATED" in content:
+        content = re.sub(r'const LAST_UPDATED = .*?;', f"const LAST_UPDATED = '{now_str}';", content)
+        content = re.sub(r'const TOTAL_ALUNOS = .*?;', f"const TOTAL_ALUNOS = {ta_val};", content)
+    else:
+        content = content.replace("const DISCIPLINES", meta_block + "\\nconst DISCIPLINES", 1)
+
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(content)
-    total_match2 = re.search(r'TOTAL_ALUNOS = (\d+)', meta_block)
-    total_val2 = int(total_match2.group(1)) if total_match2 else 0
-    print(f"✅ index.html gerado — {datetime.now().strftime('%d/%m/%Y %H:%M')} — {total_val2} entradas")
+    print(f"✅ index.html gerado — {datetime.now().strftime('%d/%m/%Y %H:%M')} — {ta_val} entradas")
 
 if __name__ == "__main__":
     print("🔄 Buscando dados do Notion...")
